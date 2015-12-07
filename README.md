@@ -3,6 +3,14 @@
 Small data analysis and machine learning framework for Clojure.  
 The aim is to provide the tools normally used in data-analysis/machine-learning in Clojure in one place.  
 
+## Leiningen
+
+[![Clojars Project](http://clojars.org/tyrion/latest-version.svg)](http://clojars.org/tyrion)
+
+## Warning!!
+
+It's not even started yet...   
+
 ## Roadmap
 
 1. Basic descriptive and inferential statistics
