@@ -13,7 +13,8 @@ Because it's easier to start this way, and we're using most of it anyway :)
 
 ## Status
 
-![alt tag](https://circleci.com/gh/zeniuseducation/Tyrion.svg?style=shield&circle-token=:circle-token)  
+![alt tag](https://circleci.com/gh/zeniuseducation/Tyrion.svg?style=shield&circle-token=:circle-token)
+[![Circle CI](https://circleci.com/gh/zeniuseducation/Tyrion/tree/master.svg?style=svg)](https://circleci.com/gh/zeniuseducation/Tyrion/tree/master)  
 
 ## Warning!!
 
