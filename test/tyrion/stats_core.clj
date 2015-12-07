@@ -62,6 +62,45 @@
                     (mean [0 1 3])
                     (mapv round))))))))
 
+(deftest mode-test
+  (time
+    (let [maxi 100
+          most-common 13.0
+          single-data (concat (repeat 20 most-common)
+                              (range maxi)
+                              (repeatedly 20 #(rand-int 50)))
+          ndim-data (for [i single-data]
+                      [i (+ i 10) (* i i)])
+          map-version (mapv #(zipmap [:a :b :c] %) ndim-data)
+          ds-version (ds/dataset [:a :b :c] ndim-data)
+          mat-version (mat/matrix ndim-data)]
+
+      (testing "modes"
+        (is (= most-common (mode single-data)))
+        (is (= {:a most-common
+                :b (+ most-common 10)
+                :c (#(* % %) most-common)}
+               (mode [:a :b :c] map-version)))
+        (is (= {:a most-common :b (+ most-common 10) :c (#(* % %) most-common)}
+               (mode [:a :b :c] ds-version)))
+        (is (= [most-common (+ most-common 10) (#(* % %) most-common)]
+               (mode [0 1 2] mat-version))))
+
+      (testing "modes error"
+        (is (= most-common (mode single-data)))
+        (is (= {:a most-common
+                :b (+ most-common 10)
+                :d nil}
+               (try (mode [:a :b :d] map-version)
+                    (catch Exception e))))
+        (is (= nil
+               (try (mode [:a :b :c :d] ds-version)
+                    (catch Exception e))))
+        (is (= nil
+               (try (mode [0 1 2 3] mat-version)
+                    (catch Exception e))))))))
+
+
 
 (deftest freq-test
   (time

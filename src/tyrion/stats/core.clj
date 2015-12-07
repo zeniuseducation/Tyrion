@@ -143,4 +143,20 @@
        (freq-by-impl-maps-fs fs ks coll)
        (freq-by-impl-maps-f fs ks coll)))))
 
+;; Public function for mode
+
+(defn mode
+  "Returns the mode of a collection of numbers. For n-dimensional data, behaves
+  the same as other functions in this namespace."
+  ([coll] (->> (frequencies coll)
+               (apply max-key val)
+               (key)))
+  ([ks coll]
+   (let [res (freq ks coll)]
+     (if (map? res)
+       (->> (vals res)
+            (map #(->> (apply max-key val %) key))
+            (zipmap ks))
+       (mapv #(->> (apply max-key val %) key) res)))))
+
 
