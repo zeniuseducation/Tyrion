@@ -6,7 +6,7 @@
     [clojure.core.matrix.dataset :as ds]
     [clojure.core.matrix :as mat]))
 
-(mat/set-current-implementation :persistent-vector)
+(mat/set-current-implementation :vectorz)
 
 (defn- prime?
   "Helper function for test"
@@ -24,7 +24,7 @@
 
 (deftest mean-test
   (time
-    (let [maxi 99
+    (let [maxi 1999
           single-inc (range maxi)
           single-uniform (repeat maxi 50)
           single-steps (range 1 (* 2 maxi) 2)
@@ -38,7 +38,7 @@
         (is (= mean-sr (round (mean single-random)))))
 
       (testing "mean for dataset version"
-        (is (= (zipmap [:a :b :d] [49.0 50.0 mean-sr])
+        (is (= (zipmap [:a :b :d] [(Math/floor (/ maxi 2.0)) 50.0 mean-sr])
                (->> [single-inc single-uniform single-steps single-random]
                     (apply interleave)
                     (partition 4)
@@ -47,14 +47,14 @@
                     (#(zipmap (keys %) (map round (vals %))))))))
 
       (testing "mean for maps version"
-        (is (= (zipmap [:a :b :d] (map double [49.0 50.0 mean-sr]))
+        (is (= (zipmap [:a :b :d] [(Math/floor (/ maxi 2.0)) 50.0 mean-sr])
                (->> [single-inc single-uniform single-steps single-random]
                     (apply map (fn [a b c d] {:a a :b b :c c :d d}))
                     (mean [:a :b :d])
                     (#(zipmap (keys %) (map round (vals %))))))))
 
       (testing "mean for matrix version"
-        (is (= [49.0 50.0 mean-sr]
+        (is (= [(Math/floor (/ maxi 2.0)) 50.0 mean-sr]
                (->> [single-inc single-uniform single-steps single-random]
                     (apply interleave)
                     (partition 4)
@@ -65,7 +65,7 @@
 
 (deftest freq-test
   (time
-    (let [maxi 100
+    (let [maxi 300
           single-data (->> (fn [] (rand-int 10))
                            (repeatedly maxi)
                            (filter prime?))
@@ -104,7 +104,7 @@
                    ((juxt :a :b))))))))
 
   (time
-    (let [maxi 100
+    (let [maxi 400
           single-data (->> (fn [] (rand-int 10))
                            (repeatedly maxi))
           primes (filter prime? single-data)
@@ -152,14 +152,14 @@
                                   (filter prime?)
                                   count)]
                      {true ctr false (- maxi ctr)})
-                :b {true 50 false 50}}
+                :b {true (quot maxi 2) false (quot maxi 2)}}
                (let [dats (-> #(hash-map :a % :b %2 :c (+ % %2))
                               (map single-data (range maxi)))]
                  (-> {:a prime? :b odd?}
                      (freq-by [:a :b] dats)))))
 
         (is (= {:a {true count-primes false (- maxi count-primes)}
-                :b {true 50 false 50}}
+                :b {true (quot maxi 2) false (quot maxi 2)}}
                (let [dats (->> (interleave single-data
                                            (range maxi)
                                            (range maxi))
@@ -169,7 +169,7 @@
                      (freq-by [:a :b] dats)))))
 
         (is (= [{true count-primes false (- maxi count-primes)}
-                {true 50 false 50}]
+                {true (quot maxi 2) false (quot maxi 2)}]
                (let [dats (->> (interleave single-data
                                            (range maxi)
                                            (range maxi))
