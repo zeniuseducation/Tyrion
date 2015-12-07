@@ -122,7 +122,7 @@
         (is (= [most-common (+ most-common 10) (#(* % %) most-common)]
                (median [0 1 2] mat-version))))
 
-      (testing "modes error"
+      (testing "Median error"
         (is (= (int most-common) (median single-data)))
         (is (= {:a (int most-common)
                 :b (int (+ most-common 10))
@@ -135,7 +135,6 @@
         (is (= nil
                (try (median [0 1 2 3] mat-version)
                     (catch Exception e))))))))
-
 
 
 (deftest freq-test
