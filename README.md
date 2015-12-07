@@ -10,6 +10,7 @@ Because it's easier to start this way, and we're using most of it anyway :)
 ## Leiningen
 
 [![Clojars Project](http://clojars.org/tyrion/latest-version.svg)](http://clojars.org/tyrion)
+https://circleci.com/gh/zeniuseducation/Tyrion.svg?style=shield&circle-token=:circle-token
 
 ## Warning!!
 
