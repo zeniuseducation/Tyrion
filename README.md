@@ -2,7 +2,7 @@
 
 Small data analysis and machine learning framework for Clojure.  
 The aim is to provide the tools normally used in data-analysis/machine-learning in Clojure in one place.  
-Why not broke-down into small libraries?   
+Why not broken-down into small libraries?   
 Because it's easier to start this way, and we're using most of it anyway :)  
 
 ## Leiningen
