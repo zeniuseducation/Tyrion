@@ -100,6 +100,42 @@
                (try (mode [0 1 2 3] mat-version)
                     (catch Exception e))))))))
 
+(deftest median-test
+  (time
+    (let [maxi 99
+          most-common (double (quot maxi 2))
+          single-data (range 1 (inc maxi))
+          ndim-data (for [i single-data]
+                      [i (+ i 10) (* i i)])
+          map-version (mapv #(zipmap [:a :b :c] %) ndim-data)
+          ds-version (ds/dataset [:a :b :c] ndim-data)
+          mat-version (mat/matrix ndim-data)]
+
+      (testing "Median"
+        (is (= (int most-common) (median single-data)))
+        (is (= {:a (int most-common)
+                :b (int (+ most-common 10))
+                :c (int (#(* % %) most-common))}
+               (median [:a :b :c] map-version)))
+        (is (= {:a most-common :b (+ most-common 10) :c (#(* % %) most-common)}
+               (median [:a :b :c] ds-version)))
+        (is (= [most-common (+ most-common 10) (#(* % %) most-common)]
+               (median [0 1 2] mat-version))))
+
+      (testing "modes error"
+        (is (= (int most-common) (median single-data)))
+        (is (= {:a (int most-common)
+                :b (int (+ most-common 10))
+                :d nil}
+               (try (median [:a :b :d] map-version)
+                    (catch Exception e))))
+        (is (= nil
+               (try (median [:a :b :c :d] ds-version)
+                    (catch Exception e))))
+        (is (= nil
+               (try (median [0 1 2 3] mat-version)
+                    (catch Exception e))))))))
+
 
 
 (deftest freq-test
