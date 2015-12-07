@@ -143,4 +143,78 @@
        (freq-by-impl-maps-fs fs ks coll)
        (freq-by-impl-maps-f fs ks coll)))))
 
+;; Public function for mode
+
+(defn mode
+  "Returns the mode of a collection of numbers. For n-dimensional data, behaves
+  the same as other functions in this namespace."
+  ([coll] (->> (frequencies coll)
+               (apply max-key val)
+               (key)))
+  ([ks coll]
+   (let [res (freq ks coll)]
+     (if (map? res)
+       (->> (vals res)
+            (map #(->> (apply max-key val %) key))
+            (zipmap ks))
+       (mapv #(->> (apply max-key val %) key) res)))))
+
+;; Public function for median
+
+(declare median-ds median-mat median-maps)
+
+(defn median
+  "Returns the median of a collection. As usual the collection can be either
+  of the 4 data types. One argument works only one-dimensional data."
+  ([coll]
+   (let [ctr (if (mat/matrix coll)
+               (mat/row-count coll)
+               (count coll))
+         sorted (sort coll)]
+     (if (even? ctr)
+       (/ (+ (nth sorted (quot ctr 2))
+             (nth sorted (- (quot ctr 2) 1)))
+          2.0)
+       (nth sorted (dec (quot ctr 2))))))
+  ([ks coll]
+   (cond (ds/dataset? coll) (median-ds ks coll)
+         (mat/matrix? coll) (median-mat ks coll)
+         :else (median-maps ks coll))))
+
+(defn- median-maps
+  [ks coll]
+  (->> (for [k ks]
+         {k (->> (map #(get % k) coll)
+                 median)})
+       (reduce merge)))
+
+(defn- median-ds
+  [ks coll]
+  (->> (-> (comp (map #(column-vals coll %))
+                 (map median))
+           (sequence ks))
+       (zipmap ks)))
+
+(defn- median-mat
+  [ks coll]
+  (-> (comp (map #(mat/get-column coll %))
+            (map median))
+      (sequence ks)
+      vec))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
