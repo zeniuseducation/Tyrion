@@ -46,6 +46,29 @@
 
 ;; Test the output value
 
+(deftest individual-metrics
+  (let [xs [1.0]
+        ys [2.0]
+        p 2.0]
+    (testing "Individiual metrics for sq-euclidean"
+      (is (== 0.0 (dist/sq-euclidean xs xs)))
+      (is (== 1.0 (dist/sq-euclidean xs ys))))
+    (testing "Individiual metrics for euclidean"
+      (is (== 0.0 (dist/euclidean xs xs)))
+      (is (== 1.0 (dist/euclidean xs ys))))
+    (testing "Individiual metrics for cityblock"
+      (is (== 0.0 (dist/cityblock xs xs)))
+      (is (== 1.0 (dist/cityblock xs ys))))
+    (testing "Individiual metrics for chebyshev"
+      (is (== 0.0 (dist/chebyshev xs xs)))
+      (is (== 1.0 (dist/chebyshev xs ys))))
+    (testing "Individiual metrics for minkowski"
+      (is (== 0.0 (dist/minkowski xs xs p)))
+      (is (== 1.0 (dist/minkowski xs ys p))))
+    (testing "Individiual metrics for hamming"
+      (is (== 0.0 (dist/hamming xs xs)))
+      (is (== 1.0 (dist/hamming xs ys))))))
+
 (deftest value-test
   (let [xs (vec (take 10 (repeat 1)))
         ys (vec (take 10 (repeat 5)))
