@@ -93,10 +93,10 @@
 (defn tanh ^double [^double a]
   (Math/tanh a))
 
-(defn todegrees ^double [^double angrad]
+(defn ->degrees ^double [^double angrad]
   (Math/toDegrees angrad))
 
-(defn toradians ^double [^double angdeg]
+(defn ->radians ^double [^double angdeg]
   (Math/toDegrees angdeg))
 
 #_(defn ulp [])

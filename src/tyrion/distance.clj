@@ -20,7 +20,7 @@
 ;;WeightedMinkowski
 ;;WeightedHamming
 
-(defn sqeuclidiean
+(defn sq-euclidean
   "sqrt(sum((x - y) .^ 2))"
   [xs ys]
   (->> xs
@@ -30,7 +30,7 @@
 (defn euclidean
   "sum((x - y).^2)"
   [xs ys]
-  (math/sqrt (sqeuclidiean xs ys)))
+  (math/sqrt (sq-euclidean xs ys)))
 
 (defn cityblock
   "sum(abs(x - y))"
