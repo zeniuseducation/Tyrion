@@ -4,6 +4,8 @@
 ;;Attemp to copy https://github.com/JuliaStats/Distances.jl
 ;;Still under heavy development
 
+;;All of thix function assumes that xs, ys and ws have the same length
+
 ;;TODO More distance
 ;;Rogers-Tanimoto
 ;;KLDivergence
@@ -48,7 +50,7 @@
   "sum(abs(x - y).^p) ^ (1/p)"
   [xs ys p]
   (let [sigma (->> xs
-                   (map (comp math/abs -))
+                   (map (comp math/abs -) ys)
                    (map #(math/pow % p))
                    (reduce +))]
     (math/pow sigma (double (/ 1.0 p)))))
