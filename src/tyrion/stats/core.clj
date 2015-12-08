@@ -159,6 +159,24 @@
             (zipmap ks))
        (mapv #(->> (apply max-key val %) key) res)))))
 
+;; Functions for mode-by
+
+(defn mode-by
+  "Like freq-by, but only returns the element with the highest occurence."
+  ([f coll]
+   (->> (freq-by f coll)
+        (apply max-key val)
+        key))
+  ([f ks coll]
+   (let [raw (freq-by f ks coll)]
+     (if (map? raw)
+       (->> (map #(get raw %) ks)
+            (map #(apply max-key val %))
+            (map key)
+            (zipmap ks))
+       (->> (map #(apply max-key val %) raw)
+            (mapv key))))))
+
 ;; Public function for median
 
 (declare median-ds median-mat median-maps)
