@@ -4,8 +4,6 @@
 ;;Attemp to copy https://github.com/JuliaStats/Distances.jl
 ;;Still under heavy development
 
-;;TODO Add test
-
 ;;TODO More distance
 ;;Rogers-Tanimoto
 ;;KLDivergence
