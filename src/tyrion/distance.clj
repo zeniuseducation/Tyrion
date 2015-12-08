@@ -44,6 +44,7 @@
   [xs ys]
   (->> xs
        (map (comp math/abs -) ys)
+       (cons 0)
        (apply max)))
 
 (defn minkowski
