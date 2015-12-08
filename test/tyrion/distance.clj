@@ -29,9 +29,7 @@
     (testing "Output type of spannorm"
       (is (= true (number? (dist/spannorm xs ys)))))
     (testing "Output type of sq-euclidean"
-      (is (= true (number? (dist/sq-euclidean xs ys)))))
-    (testing "Output type of sqeuclidiean"
-      (is (= true (number? (dist/sqeuclidiean xs ys)))))
+      (is (= true (number? (dist/sq-euclidean xs ys))))) 
     (testing "Output type of w-cityblock"
       (is (= true (number? (dist/w-cityblock xs ys ws)))))
     (testing "Output type of w-euclidean"
