@@ -42,6 +42,24 @@
       (is (= true (number? (dist/w-sqeuclidean xs ys ws)))))))
 
 
+;; Test with empty vector
+
+(deftest empty-vector-test
+  (let [xs []
+        p 2]
+    (testing "Empty vector as input for sq-euclidean"
+      (is (== 0.0 (dist/sq-euclidean xs xs))))
+    (testing "Empty vector as input for euclidean"
+      (is (== 0.0 (dist/euclidean xs xs))))
+    (testing "Empty vector as input for cityblock"
+      (is (== 0.0 (dist/cityblock xs xs))))
+    (testing "Empty vector as input for chebyshev"
+      (is (== 0.0 (dist/chebyshev xs xs))))
+    (testing "Empty vector as input for minkowski"
+      (is (== 0.0 (dist/minkowski xs xs p))))
+    (testing "Empty vector as input for hamming"
+      (is (== 0.0 (dist/hamming xs xs))))))
+
 ;; Test the output value
 
 (deftest individual-metrics
