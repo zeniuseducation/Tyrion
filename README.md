@@ -24,9 +24,8 @@ It's not even started yet...
 
 1. Basic descriptive and inferential statistics
 2. Common algorithms for classification and clustering
-3. Regressions (linear, multi-variate, and some others)
-4. Easy web-based visualisations
-5. Predictions & Modelling
+3. Regressions
+4. Easy web-based visualisations  
 
 ## Usage
 
