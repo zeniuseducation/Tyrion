@@ -100,6 +100,67 @@
                (try (mode [0 1 2 3] mat-version)
                     (catch Exception e))))))))
 
+(deftest mode-by-test
+  (time
+    (let [maxi 100
+          most-common 13.0
+          single-data (concat (repeat 20 most-common)
+                              (range maxi)
+                              (repeatedly 20 #(rand-int 50)))
+          ndim-data (for [i single-data]
+                      [i (+ i 10) (* i i)])
+          map-version (mapv #(zipmap [:a :b :c] %) ndim-data)
+          ds-version (ds/dataset [:a :b :c] ndim-data)
+          mat-version (mat/matrix ndim-data)
+          sqr #(* % %)
+          cbrt #(Math/cbrt %)]
+
+      (testing "mode-by one-dimensional data"
+        (is (= (sqr most-common) (mode-by sqr single-data)))
+        (is (= (cbrt most-common) (mode-by cbrt single-data))))
+
+      (testing "mode-by ndim data map-version"
+        (is (= {:a (cbrt most-common)
+                :b (cbrt (+ most-common 10))
+                :c (cbrt (sqr most-common))}
+               (mode-by cbrt [:a :b :c] map-version)))
+        (is (= {:a (cbrt most-common)
+                :b (cbrt (+ most-common 10))
+                :c (cbrt (sqr most-common))}
+               (mode-by cbrt [:a :b :c] map-version))))
+
+      (testing "mode-by ndim data ds-version"
+        (is (= {:a (sqr most-common)
+                :b (sqr (+ most-common 10))
+                :c (sqr (sqr most-common))}
+               (mode-by sqr [:a :b :c] ds-version)))
+        (is (= {:a (cbrt most-common)
+                :b (cbrt (+ most-common 10))
+                :c (cbrt (sqr most-common))}
+               (mode-by cbrt [:a :b :c] ds-version))))
+
+      (testing "mode-by ndim data mat-version"
+        (is (= [(sqr most-common)
+                (sqr (+ most-common 10))
+                (sqr (#(* % %) most-common))]
+               (mode-by sqr [0 1 2] mat-version)))
+        (is (= [(cbrt most-common)
+                (cbrt (+ most-common 10))
+                (cbrt (#(* % %) most-common))]
+               (mode-by cbrt [0 1 2] mat-version))))
+
+      (testing "mode-by error"
+        (is (= (sqr most-common) (mode-by sqr single-data)))
+        (is (= nil
+               (try (mode-by sqr [:a :b :d] map-version)
+                    (catch Exception e))))
+        (is (= nil
+               (try (mode-by sqr [:a :b :c :d] ds-version)
+                    (catch Exception e))))
+        (is (= nil
+               (try (mode-by sqr [0 1 2 3] mat-version)
+                    (catch Exception e))))))))
+
 (deftest median-test
   (time
     (let [maxi 99
