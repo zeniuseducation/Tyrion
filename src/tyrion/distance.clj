@@ -22,7 +22,7 @@
 
 (defn sqeuclidiean
   "sqrt(sum((x - y) .^ 2))"
-  [xy ys]
+  [xs ys]
   (->> xs
        (map (comp math/square -) ys)
        (reduce +)))
@@ -83,7 +83,7 @@
                  (map math/abs)
                  (map math/square)
                  (reduce +)
-                 u/sqrt)]
+                 math/sqrt)]
     (- 1 (/ dot (* (sq xs) (sq ys)) 1.0))))
 
 (defn correlation
@@ -126,7 +126,7 @@
 (defn w-euclidean
   "sqrt(sum((x - y).^2 .* w))"
   [xs ys ws]
-  (math/sqrt (w-sqeulidean xs ys ws)))
+  (math/sqrt (w-sqeuclidean xs ys ws)))
 
 (defn w-cityblock
   "sum(abs(x - y) .* w)"

@@ -7,13 +7,13 @@
 (defn abs ^double [^double x]
   (if (< x 0.0) (- x) x))
 
-(defn acos ^long [^long x]
+(defn acos ^double [^double x]
   (Math/acos x))
 
-(defn asin ^long [^long x]
+(defn asin ^double [^double x]
   (Math/asin x))
 
-(defn atan ^long [^long x]
+(defn atan ^double [^double x]
   (Math/atan x))
 
 (defn atan2 ^double [^double y ^double x]
@@ -70,7 +70,7 @@
 (defn rint ^double [^double a]
   (Math/rint a))
 
-(defn round ^double [^double a]
+(defn round  [^double a]
   (Math/round a))
 
 #_(defn signum [])
