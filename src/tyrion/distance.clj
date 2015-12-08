@@ -77,7 +77,7 @@
   "Check here https://reference.wolfram.com/language/ref/CosineDistance.html"
   [xs ys]
   (let [dot (->> [xs ys]
-                 (apply *)
+                 (map (partial apply *))
                  (reduce +))
         sq #(->> %
                  (map math/abs)
@@ -101,8 +101,8 @@
   "sum((x - y).^2 / (x + y))"
   [xs ys]
   (let [xy+ (map + xs ys)]
-    (->> [xs ys]
-         (map math/square)
+    (->> xs
+         (map (comp math/square -) ys)
          (map (fn [a b]
                 (/ b a))
               xy+)
