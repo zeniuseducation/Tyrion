@@ -1,4 +1,4 @@
-(ns tyrion.distance-core
+(ns tyrion.test.distance
   (:require
     [clojure.test :refer :all]
     [tyrion.utils :refer :all]
