@@ -1,4 +1,4 @@
-(ns tyrion.stats-core
+(ns tyrion.test.stats-core
   (:require
     [clojure.test :refer :all]
     [tyrion.utils :refer :all]
