@@ -19,11 +19,12 @@
        (map #(get % x) data)
        (map #(get % y) data)))
 
-(defn compose-plot
+(defn list-plot-compose
   "List (compose & plots) but each instead of plots they are list of [x y].
   And each list will be rendered to a specific color that is different to other lists."
   [& lists]
-  (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue"]
+  (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
+                 "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"]
         extreme-x (->> (mapcat #(map first %) lists)
                        ((juxt #(apply min %) #(apply max %))))
         extreme-y (->> (mapcat #(map second %) lists)
