@@ -13,7 +13,8 @@
                      (map #(get % k2) data))))
 
 (defn get-xy
-  "Create list of [x y] for the purpose of plotting from a list of maps."
+  "Helper function to create list of [x y] for the purpose of plotting
+  from a list of maps. x & y are keys in each map datum."
   [[x y :as keys-in-data] data]
   (map list
        (map #(get % x) data)
