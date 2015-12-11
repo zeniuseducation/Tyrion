@@ -9,6 +9,12 @@
 
 ;; Generic functions for calculation certain fn for n-dimensional data
 
+(defn get-col
+  [k coll]
+  (cond (ds/dataset? coll) (column-vals coll k)
+        (mat/matrix? coll) (mat/get-column coll k)
+        :else (mapv #(get % k) coll)))
+
 (defn- generic-ds
   [f ks coll]
   (->> (-> (comp (map #(column-vals coll %))
@@ -208,6 +214,19 @@
      (/ (transduce (map #(square (- % dmean))) + coll)
         (dec ctr)))))
 
+(defn deviations
+  "Returns the deviations of a collection."
+  [coll]
+  (let [dmean (mean coll)]
+    (sequence (map #(- % dmean)) coll)))
+
+(defn ndeviations
+  "Returns the deviations of a given keys of a list of maps/dataset/matrix."
+  [ks coll]
+  (cond (ds/dataset? coll) (generic-ds deviations ks coll)
+        (mat/matrix? coll) (generic-mat deviations ks coll)
+        :else (generic-maps deviations ks coll)))
+
 (defn nvariance
   "Returns the variance for selected keys (ks) in a collection."
   [ks coll]
@@ -229,6 +248,71 @@
   (cond (ds/dataset? coll) (generic-ds stdev ks coll)
         (mat/matrix? coll) (generic-mat stdev ks coll)
         :else (generic-maps stdev ks coll)))
+
+(defn quartiles
+  "Returns the quartiles in the form of [q1 q2 q3]."
+  [coll]
+  (let [sorted (sort coll)
+        ctr (mat/row-count coll)
+        nths (map #(int (* ctr (/ % 4))) (range 1 4))]
+    (mapv #(nth sorted %) nths)))
+
+(defn nquartiles
+  "Returns the quartiles [q1 q2 q3] for selected keys in coll."
+  [ks coll]
+  (cond (ds/dataset? coll) (generic-ds quartiles ks coll)
+        (mat/matrix? coll) (generic-mat quartiles ks coll)
+        :else (generic-maps quartiles ks coll)))
+
+(defn iq-range
+  "Returns the interquartile range."
+  [coll]
+  (let [[q1 _ q3] (quartiles coll)]
+    (- q3 q1)))
+
+(defn niq-range
+  "Returns the inter-quartile range for selected keys (ks) in coll."
+  [ks coll]
+  (cond (ds/dataset? coll) (generic-ds iq-range ks coll)
+        (mat/matrix? coll) (generic-mat iq-range ks coll)
+        :else (generic-maps iq-range ks coll)))
+
+(defn covariance
+  "Returns the covariance of two variables, either from two one-dim data
+  (when given two args) or two supplied keys in a list of maps/data-set/matrix
+  (three args)."
+  ([c1 c2]
+   {:pre [(== (mat/row-count c1) (mat/row-count c2))]}
+   (let [ctr (mat/row-count c1)]
+     (/ (mat/dot (deviations c1) (deviations c2))
+        (- ctr 1) 1.0)))
+  ([k1 k2 coll]
+   (cond (ds/dataset? coll)
+         (covariance (column-vals coll k1)
+                     (column-vals coll k2))
+         (mat/matrix? coll)
+         (covariance (mat/get-column coll k1)
+                     (mat/get-column coll k2))
+         :else
+         (covariance (map #(get % k1) coll)
+                     (map #(get % k2) coll)))))
+
+(defn correlation
+  "Returns the correlation of two variables. Either from two one-dimensional data
+  (when given two args) or two supplied keys of a list of maps/data-sets/matrix
+  (three args)."
+  ([c1 c2]
+    (let [std1 (stdev c1)
+          std2 (stdev c2)]
+      (if (every? pos? [std1 std2])
+        (/ (covariance c1 c2) std1 std2 1.0)
+        0)))
+  ([k1 k2 data]
+    (let [c1 (get-col k1 data)
+          c2 (get-col k2 data)]
+      (correlation c1 c2))))
+
+
 
 
 

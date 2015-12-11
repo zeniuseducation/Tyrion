@@ -1,5 +1,6 @@
 (ns tyrion.view
-  (:require [gorilla-plot.core :as gp]))
+  (:require
+    [gorilla-plot.core :as gp]))
 
 (defn plot-components
   "Plot a list of maps with a specified k1 as x and k2 as y.

@@ -390,6 +390,45 @@
             (is (= (repeat 3 java.lang.Double)
                    (map type std-result)))))))))
 
+(deftest dispersions-testing
+  (time
+    (let [ndata 1000
+          inc-data (range ndata)
+          cept-data (map (partial + 1000) (range ndata))
+          square-data (map square (range ndata))
+          map-version (map #(hash-map :a %1 :b %2 :c %3)
+                           inc-data cept-data square-data)
+          ds-version (->> (interleave inc-data cept-data square-data)
+                          (partition 3)
+                          (ds/dataset [:a :b :c]))
+          mat-version (->> (interleave inc-data cept-data square-data)
+                           (partition 3)
+                           (mat/matrix))]
+
+      (testing "Interquartile range one-dim data"
+        (is (= (- 8 3) (iq-range (range 1 11))))
+        (is (= (- 75 25) (iq-range (range 1 101)))))
+
+      (testing "Inter-quartile range for map version"
+        (let [result (niq-range [:a :b] map-version)]
+          (is (= true (map? result)))
+          (is (= [true true]
+                 (map #(number? (val %)) result)))))
+
+      (testing "Inter-quartile range for ds version"
+        (let [result (niq-range [:a :b] ds-version)]
+          (is (= true (map? result)))
+          (is (= [true true]
+                 (map #(number? (val %)) result)))))
+
+      (testing "Inter-quartile range for mat version"
+        (let [result (niq-range [0 1] mat-version)]
+          (is (= true (vector? result)))
+          (is (= [500.0 500.0] result))))
+
+      (testing "Covariance"
+        (is (= true (number? (covariance inc-data cept-data))))
+        (is (= true (number? (covariance square-data cept-data))))))))
 
 
 
