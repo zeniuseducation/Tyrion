@@ -2,18 +2,12 @@
   (:require
     [clojure.core.matrix.dataset :as ds]
     [clojure.core.matrix :as mat]
-    [tyrion.utils :refer [column-index column-vals]]
+    [tyrion.utils :refer [column-index column-vals get-col]]
     [tyrion.math :refer :all]))
 
 ;; Functions related to mean
 
 ;; Generic functions for calculation certain fn for n-dimensional data
-
-(defn get-col
-  [k coll]
-  (cond (ds/dataset? coll) (column-vals coll k)
-        (mat/matrix? coll) (mat/get-column coll k)
-        :else (mapv #(get % k) coll)))
 
 (defn- generic-ds
   [f ks coll]
