@@ -43,14 +43,14 @@
                     (apply interleave)
                     (partition 4)
                     (ds/dataset [:a :b :c :d])
-                    (mean [:a :b :d])
+                    (nmean [:a :b :d])
                     (#(zipmap (keys %) (map round (vals %))))))))
 
       (testing "mean for maps version"
         (is (= (zipmap [:a :b :d] [(Math/floor (/ maxi 2.0)) 50.0 mean-sr])
                (->> [single-inc single-uniform single-steps single-random]
                     (apply map (fn [a b c d] {:a a :b b :c c :d d}))
-                    (mean [:a :b :d])
+                    (nmean [:a :b :d])
                     (#(zipmap (keys %) (map round (vals %))))))))
 
       (testing "mean for matrix version"
@@ -59,7 +59,7 @@
                     (apply interleave)
                     (partition 4)
                     (mat/matrix)
-                    (mean [0 1 3])
+                    (nmean [0 1 3])
                     (mapv round))))))))
 
 (deftest mode-test
@@ -80,24 +80,24 @@
         (is (= {:a most-common
                 :b (+ most-common 10)
                 :c (#(* % %) most-common)}
-               (mode [:a :b :c] map-version)))
+               (nmode [:a :b :c] map-version)))
         (is (= {:a most-common :b (+ most-common 10) :c (#(* % %) most-common)}
-               (mode [:a :b :c] ds-version)))
+               (nmode [:a :b :c] ds-version)))
         (is (= [most-common (+ most-common 10) (#(* % %) most-common)]
-               (mode [0 1 2] mat-version))))
+               (nmode [0 1 2] mat-version))))
 
       (testing "modes error"
         (is (= most-common (mode single-data)))
         (is (= {:a most-common
                 :b (+ most-common 10)
                 :d nil}
-               (try (mode [:a :b :d] map-version)
+               (try (nmode [:a :b :d] map-version)
                     (catch Exception e))))
         (is (= nil
-               (try (mode [:a :b :c :d] ds-version)
+               (try (nmode [:a :b :c :d] ds-version)
                     (catch Exception e))))
         (is (= nil
-               (try (mode [0 1 2 3] mat-version)
+               (try (nmode [0 1 2 3] mat-version)
                     (catch Exception e))))))))
 
 (deftest mode-by-test
@@ -123,42 +123,42 @@
         (is (= {:a (cbrt most-common)
                 :b (cbrt (+ most-common 10))
                 :c (cbrt (sqr most-common))}
-               (mode-by cbrt [:a :b :c] map-version)))
+               (nmode-by cbrt [:a :b :c] map-version)))
         (is (= {:a (cbrt most-common)
                 :b (cbrt (+ most-common 10))
                 :c (cbrt (sqr most-common))}
-               (mode-by cbrt [:a :b :c] map-version))))
+               (nmode-by cbrt [:a :b :c] map-version))))
 
       (testing "mode-by ndim data ds-version"
         (is (= {:a (sqr most-common)
                 :b (sqr (+ most-common 10))
                 :c (sqr (sqr most-common))}
-               (mode-by sqr [:a :b :c] ds-version)))
+               (nmode-by sqr [:a :b :c] ds-version)))
         (is (= {:a (cbrt most-common)
                 :b (cbrt (+ most-common 10))
                 :c (cbrt (sqr most-common))}
-               (mode-by cbrt [:a :b :c] ds-version))))
+               (nmode-by cbrt [:a :b :c] ds-version))))
 
       (testing "mode-by ndim data mat-version"
         (is (= [(sqr most-common)
                 (sqr (+ most-common 10))
                 (sqr (#(* % %) most-common))]
-               (mode-by sqr [0 1 2] mat-version)))
+               (nmode-by sqr [0 1 2] mat-version)))
         (is (= [(cbrt most-common)
                 (cbrt (+ most-common 10))
                 (cbrt (#(* % %) most-common))]
-               (mode-by cbrt [0 1 2] mat-version))))
+               (nmode-by cbrt [0 1 2] mat-version))))
 
       (testing "mode-by error"
         (is (= (sqr most-common) (mode-by sqr single-data)))
         (is (= nil
-               (try (mode-by sqr [:a :b :d] map-version)
+               (try (nmode-by sqr [:a :b :d] map-version)
                     (catch Exception e))))
         (is (= nil
-               (try (mode-by sqr [:a :b :c :d] ds-version)
+               (try (nmode-by sqr [:a :b :c :d] ds-version)
                     (catch Exception e))))
         (is (= nil
-               (try (mode-by sqr [0 1 2 3] mat-version)
+               (try (nmode-by sqr [0 1 2 3] mat-version)
                     (catch Exception e))))))))
 
 (deftest median-test
@@ -177,24 +177,24 @@
         (is (= {:a (int most-common)
                 :b (int (+ most-common 10))
                 :c (int (#(* % %) most-common))}
-               (median [:a :b :c] map-version)))
+               (nmedian [:a :b :c] map-version)))
         (is (= {:a most-common :b (+ most-common 10) :c (#(* % %) most-common)}
-               (median [:a :b :c] ds-version)))
+               (nmedian [:a :b :c] ds-version)))
         (is (= [most-common (+ most-common 10) (#(* % %) most-common)]
-               (median [0 1 2] mat-version))))
+               (nmedian [0 1 2] mat-version))))
 
       (testing "Median error"
         (is (= (int most-common) (median single-data)))
         (is (= {:a (int most-common)
                 :b (int (+ most-common 10))
                 :d nil}
-               (try (median [:a :b :d] map-version)
+               (try (nmedian [:a :b :d] map-version)
                     (catch Exception e))))
         (is (= nil
-               (try (median [:a :b :c :d] ds-version)
+               (try (nmedian [:a :b :c :d] ds-version)
                     (catch Exception e))))
         (is (= nil
-               (try (median [0 1 2 3] mat-version)
+               (try (nmedian [0 1 2 3] mat-version)
                     (catch Exception e))))))))
 
 
@@ -218,24 +218,24 @@
 
       ;; n-dimensional data for both dataset and list of maps
       (testing "freq fn to n-dimensional data"
-        (is (= [:a :c] (keys (freq [:a :c] ds-version))))
-        (is (= [:b :d] (keys (freq [:b :d] maps-version))))
+        (is (= [:a :c] (keys (nfreq [:a :c] ds-version))))
+        (is (= [:b :d] (keys (nfreq [:b :d] maps-version))))
         (is (= [(->> (map first ndim-data)
                      (frequencies))
                 (->> (map second ndim-data)
                      (frequencies))]
-               (-> (freq [:a :b] ds-version)
+               (-> (nfreq [:a :b] ds-version)
                    ((juxt :a :b)))))
         (is (= [(->> (map first ndim-data)
                      (frequencies))
                 (->> (map second ndim-data)
                      (frequencies))]
-               (freq [0 1] matrix-version)))
+               (nfreq [0 1] matrix-version)))
         (is (= [(->> (map first ndim-data)
                      (frequencies))
                 (->> (map second ndim-data)
                      (frequencies))]
-               (-> (freq [:a :b] maps-version)
+               (-> (nfreq [:a :b] maps-version)
                    ((juxt :a :b))))))))
 
   (time
@@ -263,7 +263,7 @@
                      {true ctr false (- maxi ctr)})}
                (let [dats (-> #(hash-map :a % :b %2 :c %2)
                               (map single-data (range maxi)))]
-                 (freq-by prime? [:a :c] dats))))
+                 (nfreq-by prime? [:a :c] dats))))
 
         (is (= {:a {true count-primes false (- maxi count-primes)}
                 :c (let [ctr (count (filter prime? (range maxi)))]
@@ -271,7 +271,7 @@
                (let [dats (->> (interleave single-data (range maxi) (range maxi))
                                (partition 3)
                                (ds/dataset [:a :b :c]))]
-                 (freq-by prime? [:a :c] dats))))
+                 (nfreq-by prime? [:a :c] dats))))
 
         (is (= [{true count-primes false (- maxi count-primes)}
                 (let [ctr (count (filter prime? (range maxi)))]
@@ -279,7 +279,7 @@
                (let [dats (->> (interleave single-data (range maxi) (range maxi))
                                (partition 3)
                                (mat/matrix))]
-                 (freq-by prime? [0 2] dats)))))
+                 (nfreq-by prime? [0 2] dats)))))
 
 
       (testing "freq-by to n-dimensional data using one map of fs"
@@ -291,7 +291,7 @@
                (let [dats (-> #(hash-map :a % :b %2 :c (+ % %2))
                               (map single-data (range maxi)))]
                  (-> {:a prime? :b odd?}
-                     (freq-by [:a :b] dats)))))
+                     (nfreq-by [:a :b] dats)))))
 
         (is (= {:a {true count-primes false (- maxi count-primes)}
                 :b {true (quot maxi 2) false (quot maxi 2)}}
@@ -301,7 +301,7 @@
                                (partition 3)
                                (ds/dataset [:a :b :c]))]
                  (-> {:a prime? :b #(== 0 (rem % 2))}
-                     (freq-by [:a :b] dats)))))
+                     (nfreq-by [:a :b] dats)))))
 
         (is (= [{true count-primes false (- maxi count-primes)}
                 {true (quot maxi 2) false (quot maxi 2)}]
@@ -311,4 +311,4 @@
                                (partition 3)
                                (mat/matrix))]
                  (-> {0 prime? 2 #(== 0 (rem % 2))}
-                     (freq-by [0 2] dats)))))))))
+                     (nfreq-by [0 2] dats)))))))))
