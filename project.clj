@@ -1,4 +1,4 @@
-(defproject tyrion "0.1.5"
+(defproject tyrion "0.1.6"
   :description "Small data analysis and machine learning framework for Clojure"
   :url "https://github.com/zeniuseducation/Tyrion"
   :license {:name "Eclipse Public License"
