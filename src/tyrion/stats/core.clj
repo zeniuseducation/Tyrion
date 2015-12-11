@@ -33,16 +33,18 @@
 (defn mean
   "Returns the mean of a collection."
   [coll]
-  (/ (reduce + coll) (count coll) 1.0))
+  (/ (mat/esum coll) (mat/row-count coll) 1.0))
 
 (defn nmean
   "Returns the means of selected keys in a collection.
   Coll can be a list/vector of numbers or list of maps, dataset or matrix."
   [ks coll]
-  (let [fmean #(/ (mat/esum %) (mat/row-count %) 1.0)]
+  (let [fmean (if (or (ds/dataset? coll) (mat/matrix? coll))
+                #(/ (mat/esum %) (mat/row-count %) 1.0)
+                mean)]
     (cond (ds/dataset? coll) (generic-ds fmean ks coll)
           (mat/matrix? coll) (generic-mat fmean ks coll)
-          :else (generic-maps mean ks coll))))
+          :else (generic-maps fmean ks coll))))
 
 ;; Functions related to frequencies
 
@@ -177,9 +179,7 @@
 (defn median
   "Returns the median of a collection."
   [coll]
-  (let [ctr (if (mat/matrix coll)
-              (mat/row-count coll)
-              (count coll))
+  (let [ctr (mat/row-count coll)
         sorted (sort coll)]
     (if (even? ctr)
       (/ (+ (nth sorted (quot ctr 2))
@@ -199,12 +199,14 @@
 (defn variance
   "Returns the variance of a collection. When mean is known, it makes the job faster."
   ([coll]
-   (let [dmean (mean coll)]
+   (let [dmean (mean coll)
+         ctr (mat/row-count coll)]
      (/ (transduce (map #(square (- % dmean))) + coll)
-        (dec (count coll)))))
+        (dec ctr))))
   ([coll dmean]
-   (/ (transduce (map #(square (- % dmean))) + coll)
-      (dec (count coll)))))
+   (let [ctr (mat/row-count coll)]
+     (/ (transduce (map #(square (- % dmean))) + coll)
+        (dec ctr)))))
 
 (defn nvariance
   "Returns the variance for selected keys (ks) in a collection."
@@ -217,9 +219,9 @@
   "Returns the standard deviation of a collection. When mean is known, it makes
   the job much faster."
   ([coll]
-    (sqrt (variance coll)))
+   (sqrt (variance coll)))
   ([coll dmean]
-    (sqrt (variance coll dmean))))
+   (sqrt (variance coll dmean))))
 
 (defn nstdev
   "Returns the standard deviation for selected keys(ks) in a collection."
