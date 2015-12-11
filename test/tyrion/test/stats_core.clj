@@ -240,7 +240,7 @@
                    ((juxt :a :b))))))))
 
   (time
-    (let [maxi 400
+    (let [maxi 1000
           single-data (->> (fn [] (rand-int 10))
                            (repeatedly maxi))
           primes (filter prime? single-data)
@@ -316,7 +316,7 @@
 
 (deftest variance-stdev-test
   (time
-    (let [ndata 100
+    (let [ndata 1000
           zero-data (repeat ndata 10)
           inc-data (range ndata)
           more-data (map square (range ndata))
