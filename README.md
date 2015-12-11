@@ -33,6 +33,10 @@ It's not even started yet...
 
 mode, median, mean, quartiles, inter-quartile-range (iq-range), deviations, covariance, correlation, variance, std-dev  
 
+##### regressions
+
+linear-regression (using OLS)  
+
 ##### distance  
 
 euclidean, squared-euclidean, chebyshev, chi-square, correlation, cosine, cityblock (manhattan), hamming, jaccard  
