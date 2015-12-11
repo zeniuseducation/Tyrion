@@ -46,10 +46,15 @@ minkowski, span-norm, weighted-cityblock, weighted-euclidean, weighted-squared-e
 
 list-plot-compose : like (compose & plot) but instead of plots, it takes lists (and fix the range issue).  
 plot-components : plot x-y of two key-pairs from a given list of maps.  
+lm-plot : linear-model plot, plot the xy-pairs and its linear-model function (as line).  
+lm-plot-compose : linear-model plot for several xy-pairs.  
 
 ## Usage
 
-FIXME
+Basic usage for plotting:  
+
+1. You need to use gorilla-repl and you can read the instruction on its website on how to use it  
+2. Tyrion adds some features in tyrion.view namespace for plotting  
 
 ## License
 
