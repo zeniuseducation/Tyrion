@@ -428,7 +428,16 @@
 
       (testing "Covariance"
         (is (= true (number? (covariance inc-data cept-data))))
-        (is (= true (number? (covariance square-data cept-data))))))))
+        (is (= true (number? (covariance square-data cept-data))))
+        (is (= true (number? (covariance :a :b ds-version))))
+        (is (= true (number? (covariance :a :b map-version))))
+        (is (= true (number? (covariance 0 1 mat-version)))))
+
+      (testing "Correlation"
+        (is (= 1.0 (round (correlation inc-data cept-data))))
+        (is (= 1.0 (round (correlation :a :b map-version))))
+        (is (= 1.0 (round (correlation :a :b ds-version))))
+        (is (= 1.0 (round (correlation 0 1 mat-version))))))))
 
 
 
