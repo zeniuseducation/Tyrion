@@ -2,7 +2,8 @@
   (:require
     [clojure.core.matrix.dataset :as ds]
     [clojure.core.matrix :as mat]
-    [tyrion.utils :refer [column-index column-vals]]))
+    [tyrion.utils :refer [column-index column-vals]]
+    [tyrion.math :refer :all]))
 
 ;; Functions related to mean
 
@@ -234,6 +235,42 @@
   (cond (ds/dataset? coll) (nmedian-ds ks coll)
         (mat/matrix? coll) (nmedian-mat ks coll)
         :else (nmedian-maps ks coll)))
+
+(defn variance
+  "Returns the variance of a collection. When mean is known, it makes the job faster."
+  ([coll]
+    (let [dmean (mean coll)]
+      (/ (transduce (map #(square (- % dmean))) + coll)
+         (count coll))))
+  ([coll dmean]
+    (/ dmean (count coll))))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
