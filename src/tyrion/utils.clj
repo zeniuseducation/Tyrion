@@ -1,4 +1,7 @@
-(ns tyrion.utils)
+(ns tyrion.utils
+  (:require
+    [clojure.core.matrix :as mat]
+    [clojure.core.matrix.dataset :as ds]))
 
 (defn round
   "Round a double to the given precision (number of significant digits)"
@@ -19,3 +22,9 @@
   [ds column-name]
   (let [idx (column-index (get ds :column-names) column-name)]
     (get-in ds [:columns idx])))
+
+(defn get-col
+  [k coll]
+  (cond (ds/dataset? coll) (column-vals coll k)
+        (mat/matrix? coll) (mat/get-column coll k)
+        :else (mapv #(get % k) coll)))

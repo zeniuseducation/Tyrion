@@ -1,6 +1,8 @@
 (ns tyrion.view
   (:require
-    [gorilla-plot.core :as gp]))
+    [gorilla-plot.core :as gp]
+    [tyrion.regressions :refer [linear-regression]]
+    [tyrion.utils :refer [get-col]]))
 
 (defn plot-components
   "Plot a list of maps with a specified k1 as x and k2 as y.
@@ -27,9 +29,9 @@
   [& lists]
   (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
                  "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"]
-        extreme-x (->> (mapcat #(map first %) lists)
+        extreme-x (->> (mapcat #(get-col 0 %) lists)
                        ((juxt #(apply min %) #(apply max %))))
-        extreme-y (->> (mapcat #(map second %) lists)
+        extreme-y (->> (mapcat #(get-col 1 %) lists)
                        ((juxt #(apply min %) #(apply max %))))]
     (loop [[l & ls] lists i 0 res (transient [])]
       (if l
@@ -39,6 +41,61 @@
                             :colour (colours i)
                             :symbol-size 40
                             :plot-range [extreme-x extreme-y])))
+        (apply gp/compose (persistent! res))))))
+
+(defn lm-plot
+  "Plot the data and its linear-model's line."
+  ([xs ys]
+   (let [lm (linear-regression xs ys)]
+     (gp/compose (gp/list-plot (->> (interleave xs ys)
+                                    (partition 2))
+                               :symbol-size 30
+                               :plot-size 600
+                               :plot-range [(:xrange lm)
+                                            (:yrange lm)])
+                 (gp/plot (:fn lm)
+                          [(apply min xs) (apply max ys)]
+                          :plot-points 200
+                          :colour "steelblue"
+                          :symbol-size 45))))
+  ([xy-list]
+   (let [xs (map first xy-list)
+         ys (map second xy-list)]
+     (lm-plot xs ys)))
+  ([xkey ykey coll]
+   (let [xs (get-col xkey coll)
+         ys (get-col ykey coll)]
+     (lm-plot xs ys))))
+
+(defn lm-plot-compose
+  "Composed a linear regression plot for several collections of pairs.
+  The goal is to automatically assigned different color to each set of data."
+  [& lists-of-xy-pairs]
+  (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
+                 "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"]
+        extreme-x (->> (mapcat #(get-col 0 %) lists-of-xy-pairs)
+                       ((juxt #(apply min %) #(apply max %))))
+        extreme-y (->> (mapcat #(get-col 1 %) lists-of-xy-pairs)
+                       ((juxt #(apply min %) #(apply max %))))]
+    (loop [[l & ls] lists-of-xy-pairs i 0 res (transient [])]
+      (if l
+        (let [lm (linear-regression l)
+              xs (get-col 0 l)
+              ys (get-col 1 l)]
+          (recur ls (inc i)
+                 (conj! (conj! res
+                               (gp/list-plot
+                                 (->> (interleave xs ys)
+                                      (partition 2))
+                                 :symbol-size 30
+                                 :colour (colours i)
+                                 :plot-size 600
+                                 :plot-range [extreme-x extreme-y]))
+                        (gp/plot (:fn lm)
+                                 extreme-x
+                                 :plot-points 200
+                                 :colour (colours i)
+                                 :symbol-size 45))))
         (apply gp/compose (persistent! res))))))
 
 

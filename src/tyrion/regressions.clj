@@ -2,8 +2,7 @@
   (:require
     [tyrion.math :refer :all]
     [tyrion.stats.core :refer :all]
-    [clojure.core.matrix.dataset :as ds]
-    [clojure.core.matrix :as mat]))
+    [tyrion.utils :refer [get-col]]))
 
 (defn linear-regression
   "Returns the complete model of simple linear regression model.
@@ -21,6 +20,10 @@
       :fn                 fun
       :sum-squared-errors (->> (map #(square (- %2 (fun %))) xs ys)
                                (reduce +))}))
+  ([xy-pairs]
+    (let [xs (get-col 0 xy-pairs)
+          ys (get-col 1 xy-pairs)]
+      (linear-regression xs ys)))
   ([xkey ykey coll]
    (linear-regression (get-col xkey coll)
                       (get-col ykey coll))))
