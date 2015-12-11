@@ -21,7 +21,7 @@
        (map #(get % y) data)))
 
 (defn list-plot-compose
-  "List (compose & plots) but each instead of plots they are list of [x y].
+  "Like (compose & plots) but instead of plots they are list of [x y].
   And each list will be rendered to a specific color that is different to other lists."
   [& lists]
   (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
