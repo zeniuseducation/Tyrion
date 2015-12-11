@@ -4,7 +4,8 @@
     [tyrion.utils :refer :all]
     [tyrion.stats.core :refer :all]
     [clojure.core.matrix.dataset :as ds]
-    [clojure.core.matrix :as mat]))
+    [clojure.core.matrix :as mat]
+    [tyrion.math :refer [square sqrt]]))
 
 (mat/set-current-implementation :vectorz)
 
@@ -312,3 +313,88 @@
                                (mat/matrix))]
                  (-> {0 prime? 2 #(== 0 (rem % 2))}
                      (nfreq-by [0 2] dats)))))))))
+
+(deftest variance-stdev-test
+  (time
+    (let [ndata 100
+          zero-data (repeat ndata 10)
+          inc-data (range ndata)
+          more-data (map square (range ndata))
+          var-inc-data (let [dmean (mean inc-data)]
+                         (/ (->> inc-data
+                                 (map #(square (- % dmean)))
+                                 (reduce +))
+                            (dec (count inc-data))))
+          var-more-data (let [dmean (mean more-data)]
+                          (/ (->> more-data
+                                  (map #(square (- % dmean)))
+                                  (reduce +))
+                             (dec (count more-data))))]
+      (testing "One-dim data variance and stdev"
+        (is (= 0.0 (variance zero-data)))
+        (is (= 0.0 (stdev zero-data)))
+        (let [result (variance inc-data)]
+          (is (= var-inc-data result))
+          (is (= (sqrt var-inc-data)
+                 (stdev inc-data)))
+          (is (= java.lang.Double (type result)))
+          (is (= java.lang.Double (type (sqrt result))))))
+
+      (testing "Maps version of variance & stdev"
+        (let [data (map #(hash-map :a %1 :b %2 :c %3)
+                        zero-data
+                        inc-data
+                        more-data)
+              var-result (nvariance [:a :b :c] data)
+              std-result (nstdev [:a :b :c] data)]
+          (is (= {:a 0.0 :b var-inc-data :c var-more-data}
+                 var-result))
+          (is (= {:a 0.0
+                  :b (sqrt var-inc-data)
+                  :c (sqrt var-more-data)}
+                 std-result))
+          (is (= (repeat 3 java.lang.Double)
+                 (map type (vals var-result))))
+          (is (= (repeat 3 java.lang.Double)
+                 (map type (vals std-result))))))
+
+      (testing "Dataset version of variance and stdev"
+        (let [data (->> (interleave zero-data inc-data more-data)
+                        (partition 3)
+                        (ds/dataset [:a :b :c]))]
+          (let [var-result (nvariance [:a :b :c] data)
+                std-result (nstdev [:a :b :c] data)]
+            (is (= {:a 0.0 :b var-inc-data :c var-more-data}
+                   var-result))
+            (is (= {:a 0.0
+                    :b (sqrt var-inc-data)
+                    :c (sqrt var-more-data)}
+                   std-result))
+            (is (= (repeat 3 java.lang.Double)
+                   (map type (vals var-result))))
+            (is (= (repeat 3 java.lang.Double)
+                   (map type (vals std-result)))))))
+
+      (testing "Matrix version of variance and stdev"
+        (let [data (->> (interleave zero-data inc-data more-data)
+                        (partition 3)
+                        mat/matrix)]
+          (let [var-result (nvariance [0 1 2] data)
+                std-result (nstdev [0 1 2] data)]
+            (is (= [0.0 var-inc-data var-more-data]
+                   var-result))
+            (is (= (repeat 3 java.lang.Double)
+                   (map type var-result)))
+            (is (= [0.0 (sqrt var-inc-data) (sqrt var-more-data)]
+                   std-result))
+            (is (= (repeat 3 java.lang.Double)
+                   (map type std-result)))))))))
+
+
+
+
+
+
+
+
+

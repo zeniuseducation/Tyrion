@@ -2,68 +2,51 @@
   (:require
     [clojure.core.matrix.dataset :as ds]
     [clojure.core.matrix :as mat]
-    [tyrion.utils :refer [column-index column-vals]]))
+    [tyrion.utils :refer [column-index column-vals]]
+    [tyrion.math :refer :all]))
 
 ;; Functions related to mean
 
-;; Implementations for mean
+;; Generic functions for calculation certain fn for n-dimensional data
 
-(defn- nmean-ds
-  [ks coll]
+(defn- generic-ds
+  [f ks coll]
   (->> (-> (comp (map #(column-vals coll %))
-                 (map #(/ (mat/esum %) (mat/row-count %) 1.0)))
+                 (map f))
            (sequence ks))
        (zipmap ks)))
 
-(defn- nmean-mat
-  [ks coll]
+(defn- generic-mat
+  [f ks coll]
   (-> (comp (map #(mat/get-column coll %))
-            (map #(/ (mat/esum %) (mat/row-count %) 1.0)))
+            (map f))
       (sequence ks)
       vec))
 
-(defn- nmean-maps
-  [ks coll]
-  (->> (map #(select-keys % ks) coll)
-       (reduce #(merge-with + % %2))
-       (merge-with * (zipmap ks (repeat (count ks) (/ 1.0 (count coll)))))))
+(defn- generic-maps
+  [f ks coll]
+  (->> (-> (comp (map #(map (fn [x] (get x %)) coll))
+                 (map f))
+           (sequence ks))
+       (zipmap ks)))
 
 (defn mean
   "Returns the mean of a collection."
   [coll]
-  (/ (reduce + coll) (count coll) 1.0))
+  (/ (mat/esum coll) (mat/row-count coll) 1.0))
 
 (defn nmean
   "Returns the means of selected keys in a collection.
   Coll can be a list/vector of numbers or list of maps, dataset or matrix."
   [ks coll]
-  (cond (ds/dataset? coll) (nmean-ds ks coll)
-        (mat/matrix? coll) (nmean-mat ks coll)
-        :else (nmean-maps ks coll)))
+  (let [fmean (if (or (ds/dataset? coll) (mat/matrix? coll))
+                #(/ (mat/esum %) (mat/row-count %) 1.0)
+                mean)]
+    (cond (ds/dataset? coll) (generic-ds fmean ks coll)
+          (mat/matrix? coll) (generic-mat fmean ks coll)
+          :else (generic-maps fmean ks coll))))
 
 ;; Functions related to frequencies
-
-;; Implementations details for freq
-(defn- nfreq-impl-maps
-  [ks maps]
-  (->> (for [k ks]
-         (->> (map #(get % k) maps)
-              (frequencies)))
-       (zipmap ks)))
-
-(defn- nfreq-impl-ds
-  [cols ds]
-  (->> (-> (comp (map #(column-vals ds %))
-                 (map frequencies))
-           (sequence cols))
-       (zipmap cols)))
-
-(defn- nfreq-impl-mat
-  [cols mats]
-  (-> (comp (map #(mat/get-column mats %))
-            (map frequencies))
-      (sequence cols)
-      vec))
 
 (defn freq
   "Returns the result of clojure's frequencies function. "
@@ -74,9 +57,9 @@
   "Returns the frequencies of selected keys (ks) in coll."
   [ks coll]
   (cond
-    (ds/dataset? coll) (nfreq-impl-ds ks coll)
-    (mat/matrix? coll) (nfreq-impl-mat ks coll)
-    :else (nfreq-impl-maps ks coll)))
+    (ds/dataset? coll) (generic-ds frequencies ks coll)
+    (mat/matrix? coll) (generic-mat frequencies ks coll)
+    :else (generic-maps frequencies ks coll)))
 
 ;; Implementations for freq-by
 
@@ -193,13 +176,10 @@
 
 ;; Public function for median
 
-
 (defn median
   "Returns the median of a collection."
   [coll]
-  (let [ctr (if (mat/matrix coll)
-              (mat/row-count coll)
-              (count coll))
+  (let [ctr (mat/row-count coll)
         sorted (sort coll)]
     (if (even? ctr)
       (/ (+ (nth sorted (quot ctr 2))
@@ -207,33 +187,75 @@
          2.0)
       (nth sorted (dec (quot ctr 2))))))
 
-(defn- nmedian-maps
-  [ks coll]
-  (->> (for [k ks]
-         {k (->> (map #(get % k) coll)
-                 median)})
-       (reduce merge)))
-
-(defn- nmedian-ds
-  [ks coll]
-  (->> (-> (comp (map #(column-vals coll %))
-                 (map median))
-           (sequence ks))
-       (zipmap ks)))
-
-(defn- nmedian-mat
-  [ks coll]
-  (-> (comp (map #(mat/get-column coll %))
-            (map median))
-      (sequence ks)
-      vec))
-
 (defn nmedian
   "Returns the median of a collection for selected keys (ks) in coll."
   [ks coll]
-  (cond (ds/dataset? coll) (nmedian-ds ks coll)
-        (mat/matrix? coll) (nmedian-mat ks coll)
-        :else (nmedian-maps ks coll)))
+  (cond (ds/dataset? coll) (generic-ds median ks coll)
+        (mat/matrix? coll) (generic-mat median ks coll)
+        :else (generic-maps median ks coll)))
+
+;; Public fn for variance and standard deviation
+
+(defn variance
+  "Returns the variance of a collection. When mean is known, it makes the job faster."
+  ([coll]
+   (let [dmean (mean coll)
+         ctr (mat/row-count coll)]
+     (/ (transduce (map #(square (- % dmean))) + coll)
+        (dec ctr))))
+  ([coll dmean]
+   (let [ctr (mat/row-count coll)]
+     (/ (transduce (map #(square (- % dmean))) + coll)
+        (dec ctr)))))
+
+(defn nvariance
+  "Returns the variance for selected keys (ks) in a collection."
+  [ks coll]
+  (cond (ds/dataset? coll) (generic-ds variance ks coll)
+        (mat/matrix? coll) (generic-mat variance ks coll)
+        :else (generic-maps variance ks coll)))
+
+(defn stdev
+  "Returns the standard deviation of a collection. When mean is known, it makes
+  the job much faster."
+  ([coll]
+   (sqrt (variance coll)))
+  ([coll dmean]
+   (sqrt (variance coll dmean))))
+
+(defn nstdev
+  "Returns the standard deviation for selected keys(ks) in a collection."
+  [ks coll]
+  (cond (ds/dataset? coll) (generic-ds stdev ks coll)
+        (mat/matrix? coll) (generic-mat stdev ks coll)
+        :else (generic-maps stdev ks coll)))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
