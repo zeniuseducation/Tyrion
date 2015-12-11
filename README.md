@@ -33,17 +33,15 @@ It's not even started yet...
 
 mode, median, mean, quartiles, inter-quartile-range (iq-range), deviations, covariance, correlation, variance, std-dev  
 
-##### distance
+##### distance  
+
+euclidean, squared-euclidean, chebyshev, chi-square, correlation, cosine, cityblock (manhattan), hamming, jaccard  
+minkowski, span-norm, weighted-cityblock, weighted-euclidean, weighted-squared-euclidean, weigthed-hamming  
 
 ##### view (using gorilla-plot)  
 
 list-plot-compose : like (compose & plot) but instead of plots, it takes lists (and fix the range issue).  
 plot-components : plot x-y of two key-pairs from a given list of maps.  
-
-##### distance  
-
-euclidean, squared-euclidean, chebyshev, chi-square, correlation, cosine, cityblock (manhattan), hamming, jaccard  
-minkowski, span-norm, weighted-cityblock, weighted-euclidean, weighted-squared-euclidean, weigthed-hamming  
 
 ## Usage
 
