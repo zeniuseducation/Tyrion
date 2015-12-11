@@ -433,6 +433,22 @@
         (is (= true (number? (covariance :a :b map-version))))
         (is (= true (number? (covariance 0 1 mat-version)))))
 
+      (testing "Deviations"
+        (is (= ndata (count (deviations inc-data))))
+        (is (= true (every? number? (deviations cept-data))))
+        (is (= {:a ndata :b ndata}
+               (-> (ndeviations [:a :b] map-version)
+                   (update-in [:a] count)
+                   (update-in [:b] count))))
+        (is (= {:a ndata :b ndata}
+               (-> (ndeviations [:a :b] ds-version)
+                   (update-in [:a] count)
+                   (update-in [:b] count))))
+        (is (= [ndata ndata]
+               (-> (ndeviations [0 1] mat-version)
+                   (update-in [0] count)
+                   (update-in [1] count)))))
+
       (testing "Correlation"
         (is (= 1.0 (round (correlation inc-data cept-data))))
         (is (= 1.0 (round (correlation :a :b map-version))))
