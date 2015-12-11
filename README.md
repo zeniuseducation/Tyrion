@@ -49,7 +49,10 @@ plot-components : plot x-y of two key-pairs from a given list of maps.
 
 ## Usage
 
-FIXME
+Basic usage for plotting:  
+
+1. You need to use gorilla-repl and read how to use the repl and plot  
+2. Tyrion adds some features in tyrion.view namespace for plotting  
 
 ## License
 
