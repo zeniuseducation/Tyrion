@@ -19,11 +19,13 @@
       :yrange             [(apply min ys) (apply max ys)]
       :fn                 fun
       :sum-squared-errors (->> (map #(square (- %2 (fun %))) xs ys)
-                               (reduce +))}))
+                               (reduce +))
+      :data               (->> (interleave xs ys)
+                               (partition 2))}))
   ([xy-pairs]
-    (let [xs (get-col 0 xy-pairs)
-          ys (get-col 1 xy-pairs)]
-      (linear-regression xs ys)))
+   (let [xs (get-col 0 xy-pairs)
+         ys (get-col 1 xy-pairs)]
+     (linear-regression xs ys)))
   ([xkey ykey coll]
    (linear-regression (get-col xkey coll)
                       (get-col ykey coll))))

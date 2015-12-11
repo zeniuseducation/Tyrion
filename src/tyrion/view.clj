@@ -71,31 +71,58 @@
   "Composed a linear regression plot for several collections of pairs.
   The goal is to automatically assigned different color to each set of data."
   [& lists-of-xy-pairs]
-  (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
-                 "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"]
-        extreme-x (->> (mapcat #(get-col 0 %) lists-of-xy-pairs)
-                       ((juxt #(apply min %) #(apply max %))))
-        extreme-y (->> (mapcat #(get-col 1 %) lists-of-xy-pairs)
-                       ((juxt #(apply min %) #(apply max %))))]
-    (loop [[l & ls] lists-of-xy-pairs i 0 res (transient [])]
-      (if l
-        (let [lm (linear-regression l)
-              xs (get-col 0 l)
-              ys (get-col 1 l)]
-          (recur ls (inc i)
-                 (conj! (conj! res
-                               (gp/list-plot
-                                 (->> (interleave xs ys)
-                                      (partition 2))
-                                 :symbol-size 30
-                                 :colour (colours i)
-                                 :plot-size 600
-                                 :plot-range [extreme-x extreme-y]))
-                        (gp/plot (:fn lm)
-                                 extreme-x
-                                 :plot-points 200
-                                 :colour (colours i)
-                                 :symbol-size 45))))
-        (apply gp/compose (persistent! res))))))
+  (if (map? (first lists-of-xy-pairs))
+    (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
+                   "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"]
+          extreme-x (->> (mapcat #(get-col 0 %) (map :data lists-of-xy-pairs))
+                         ((juxt #(apply min %) #(apply max %))))
+          extreme-y (->> (mapcat #(get-col 1 %) (map :data lists-of-xy-pairs))
+                         ((juxt #(apply min %) #(apply max %))))]
+      (loop [[lm & ls] lists-of-xy-pairs i 0 res (transient [])]
+        (if lm
+          (let [l (:data lm)
+                xs (get-col 0 l)
+                ys (get-col 1 l)]
+            (recur ls (inc i)
+                   (conj! (conj! res
+                                 (gp/list-plot
+                                   (->> (interleave xs ys)
+                                        (partition 2))
+                                   :symbol-size 30
+                                   :colour (colours i)
+                                   :plot-size 600
+                                   :plot-range [extreme-x extreme-y]))
+                          (gp/plot (:fn lm)
+                                   extreme-x
+                                   :plot-points 200
+                                   :colour (colours i)
+                                   :symbol-size 45))))
+          (apply gp/compose (persistent! res)))))
+    (let [colours ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
+                   "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"]
+          extreme-x (->> (mapcat #(get-col 0 %) lists-of-xy-pairs)
+                         ((juxt #(apply min %) #(apply max %))))
+          extreme-y (->> (mapcat #(get-col 1 %) lists-of-xy-pairs)
+                         ((juxt #(apply min %) #(apply max %))))]
+      (loop [[l & ls] lists-of-xy-pairs i 0 res (transient [])]
+        (if l
+          (let [lm (linear-regression l)
+                xs (get-col 0 l)
+                ys (get-col 1 l)]
+            (recur ls (inc i)
+                   (conj! (conj! res
+                                 (gp/list-plot
+                                   (->> (interleave xs ys)
+                                        (partition 2))
+                                   :symbol-size 30
+                                   :colour (colours i)
+                                   :plot-size 600
+                                   :plot-range [extreme-x extreme-y]))
+                          (gp/plot (:fn lm)
+                                   extreme-x
+                                   :plot-points 200
+                                   :colour (colours i)
+                                   :symbol-size 45))))
+          (apply gp/compose (persistent! res)))))))
 
 
