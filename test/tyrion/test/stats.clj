@@ -220,7 +220,7 @@
           ds-version (ds/dataset [:a :b :c :d] ndim-data)
           maps-version (mapv #(zipmap [:a :b :c :d] %) ndim-data)]
 
-      (info "\nFreq test 500 data")
+      (info "\nFreq test 500 data including prime-checking")
 
       ;; single-dimensional data test, nothing fancy just frequencies
       (testing "freq fn to one-dimensional data"
@@ -256,7 +256,7 @@
           primes (filter prime? single-data)
           count-primes (count primes)]
 
-      (info "\nFreq-by test 1000 data")
+      (info "\nFreq-by test 1000 data including prime-checking")
 
       ;; single-dimensional data test
       (testing "freq-by to one-dimensional data"

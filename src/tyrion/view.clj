@@ -39,7 +39,8 @@
                (conj! res (gp/list-plot
                             l
                             :colour (colours i)
-                            :symbol-size 40
+                            :symbol-size 5
+                            :plot-size 600
                             :plot-range [extreme-x extreme-y])))
         (apply gp/compose (persistent! res))))))
 
