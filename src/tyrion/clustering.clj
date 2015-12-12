@@ -53,9 +53,9 @@
     (loop [i (int 0) kms inits prev [] result []]
       (if (or (> i maxi) (= (map :data (sort-by :label kms))
                             (map :data (sort-by :label prev))))
-        [(->> (sort-by key result)
-              (map second)
-              (mat/emap :data)) i]
+        (->> (sort-by key result)
+             (map second)
+             (mat/emap :data))
         (let [tmp (kmeans-one dfn kms data)
               tmp-kms (->> (sort-by key tmp)
                            (map second)
@@ -63,3 +63,5 @@
                            (mapv #(s/nmean (vec dims) %))
                            (labeling k))]
           (recur (+ 1 i) tmp-kms kms tmp))))))
+
+(defn pub [x] x)
