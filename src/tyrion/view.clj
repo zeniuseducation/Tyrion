@@ -4,6 +4,8 @@
     [tyrion.regressions :refer [linear-regression]]
     [tyrion.utils :refer [get-col]]))
 
+(def size (atom 700))
+
 (defn plot-components
   "Plot a list of maps with a specified k1 as x and k2 as y.
   k1 & k2 are keys in each map datum, and they must exist in all maps."
@@ -39,8 +41,8 @@
                (conj! res (gp/list-plot
                             l
                             :colour (colours i)
-                            :symbol-size 5
-                            :plot-size 600
+                            :symbol-size 15
+                            :plot-size @size
                             :plot-range [extreme-x extreme-y])))
         (apply gp/compose (persistent! res))))))
 
@@ -51,7 +53,7 @@
      (gp/compose (gp/list-plot (->> (interleave xs ys)
                                     (partition 2))
                                :symbol-size 30
-                               :plot-size 600
+                               :plot-size @size
                                :plot-range [(:xrange lm)
                                             (:yrange lm)])
                  (gp/plot (:fn lm)
@@ -91,7 +93,7 @@
                                         (partition 2))
                                    :symbol-size 30
                                    :colour (colours i)
-                                   :plot-size 600
+                                   :plot-size @size
                                    :plot-range [extreme-x extreme-y]))
                           (gp/plot (:fn lm)
                                    extreme-x
@@ -117,7 +119,7 @@
                                         (partition 2))
                                    :symbol-size 30
                                    :colour (colours i)
-                                   :plot-size 600
+                                   :plot-size @size
                                    :plot-range [extreme-x extreme-y]))
                           (gp/plot (:fn lm)
                                    extreme-x
