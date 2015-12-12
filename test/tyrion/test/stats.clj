@@ -1,8 +1,8 @@
-(ns tyrion.test.stats-core
+(ns tyrion.test.stats
   (:require
     [clojure.test :refer :all]
     [tyrion.utils :refer :all]
-    [tyrion.stats.core :refer :all]
+    [tyrion.stats  :refer :all]
     [clojure.core.matrix.dataset :as ds]
     [clojure.core.matrix :as mat]
     [tyrion.math :refer [square sqrt]]))

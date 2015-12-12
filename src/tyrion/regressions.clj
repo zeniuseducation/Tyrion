@@ -1,14 +1,17 @@
 (ns tyrion.regressions
   (:require
     [tyrion.math :refer :all]
-    [tyrion.stats.core :refer :all]
-    [tyrion.utils :refer [get-col]]))
+    [tyrion.stats :refer :all]
+    [tyrion.utils :refer [get-col]]
+    [clojure.core.matrix :as mat]))
 
 (defn linear-regression
   "Returns the complete model of simple linear regression model.
   This is the default fn that uses OLS. Returns the complete map."
-  ([xs ys]
-   (let [corr (correlation xs ys)
+  ([xcol ycol]
+   (let [xs (mat/matrix xcol)
+         ys (mat/matrix ycol)
+         corr (correlation xs ys)
          gradient (/ (* (stdev ys) corr) (stdev xs))
          intercept (- (mean ys) (* gradient (mean xs)))
          fun (fn [x] (+ (* gradient x) intercept))]

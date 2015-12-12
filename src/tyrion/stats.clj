@@ -1,4 +1,4 @@
-(ns tyrion.stats.core
+(ns tyrion.stats
   (:require
     [clojure.core.matrix.dataset :as ds]
     [clojure.core.matrix :as mat]
