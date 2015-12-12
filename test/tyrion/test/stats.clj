@@ -5,7 +5,8 @@
     [tyrion.stats  :refer :all]
     [clojure.core.matrix.dataset :as ds]
     [clojure.core.matrix :as mat]
-    [tyrion.math :refer [square sqrt]]))
+    [tyrion.math :refer [square sqrt]]
+    [taoensso.timbre :refer [info]]))
 
 (mat/set-current-implementation :vectorz)
 
@@ -32,6 +33,7 @@
           single-random (repeatedly maxi (fn [] (rand-int 10)))
           mean-sr (round (/ (reduce + single-random) (count single-random) (double 1.0)))]
 
+      (info "\nMean test 1999 data")
       (testing "mean for one-dimensional data"
         (is (= (Math/floor (/ maxi 2.0)) (mean single-inc)))
         (is (= 50.0 (mean single-uniform)))
@@ -65,7 +67,7 @@
 
 (deftest mode-test
   (time
-    (let [maxi 100
+    (let [maxi 1000
           most-common 13.0
           single-data (concat (repeat 20 most-common)
                               (range maxi)
@@ -75,6 +77,8 @@
           map-version (mapv #(zipmap [:a :b :c] %) ndim-data)
           ds-version (ds/dataset [:a :b :c] ndim-data)
           mat-version (mat/matrix ndim-data)]
+
+      (info "\nMode test 1000 data")
 
       (testing "modes"
         (is (= most-common (mode single-data)))
@@ -103,7 +107,7 @@
 
 (deftest mode-by-test
   (time
-    (let [maxi 100
+    (let [maxi 1000
           most-common 13.0
           single-data (concat (repeat 20 most-common)
                               (range maxi)
@@ -115,6 +119,8 @@
           mat-version (mat/matrix ndim-data)
           sqr #(* % %)
           cbrt #(Math/cbrt %)]
+
+      (info "\nMode-by test 1000 data")
 
       (testing "mode-by one-dimensional data"
         (is (= (sqr most-common) (mode-by sqr single-data)))
@@ -164,7 +170,7 @@
 
 (deftest median-test
   (time
-    (let [maxi 99
+    (let [maxi 999
           most-common (double (quot maxi 2))
           single-data (range 1 (inc maxi))
           ndim-data (for [i single-data]
@@ -172,6 +178,8 @@
           map-version (mapv #(zipmap [:a :b :c] %) ndim-data)
           ds-version (ds/dataset [:a :b :c] ndim-data)
           mat-version (mat/matrix ndim-data)]
+
+      (info "\nMedian test 999 data")
 
       (testing "Median"
         (is (= (int most-common) (median single-data)))
@@ -201,7 +209,7 @@
 
 (deftest freq-test
   (time
-    (let [maxi 300
+    (let [maxi 500
           single-data (->> (fn [] (rand-int 10))
                            (repeatedly maxi)
                            (filter prime?))
@@ -211,6 +219,8 @@
           matrix-version (mat/matrix ndim-data)
           ds-version (ds/dataset [:a :b :c :d] ndim-data)
           maps-version (mapv #(zipmap [:a :b :c :d] %) ndim-data)]
+
+      (info "\nFreq test 500 data")
 
       ;; single-dimensional data test, nothing fancy just frequencies
       (testing "freq fn to one-dimensional data"
@@ -245,6 +255,8 @@
                            (repeatedly maxi))
           primes (filter prime? single-data)
           count-primes (count primes)]
+
+      (info "\nFreq-by test 1000 data")
 
       ;; single-dimensional data test
       (testing "freq-by to one-dimensional data"
@@ -330,6 +342,9 @@
                                   (map #(square (- % dmean)))
                                   (reduce +))
                              (dec (count more-data))))]
+
+      (info "\nVariance and standard deviation tests 1000 data")
+
       (testing "One-dim data variance and stdev"
         (is (= 0.0 (variance zero-data)))
         (is (= 0.0 (stdev zero-data)))
@@ -404,6 +419,8 @@
           mat-version (->> (interleave inc-data cept-data square-data)
                            (partition 3)
                            (mat/matrix))]
+
+      (info "\nDispersion tests 1000 data")
 
       (testing "Interquartile range one-dim data"
         (is (= (- 8 3) (iq-range (range 1 11))))
