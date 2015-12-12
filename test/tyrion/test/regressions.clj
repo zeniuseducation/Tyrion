@@ -10,7 +10,7 @@
         m 3.0 c 12.0
         y-one (map #(+ (* m %) c) x-one)
         lm-one (linear-regression x-one y-one)
-        sets #{:correlation :gradient :intercept
+        sets #{:correlation :gradient :intercept :data
                :xrange :yrange :fn :sum-squared-errors}]
     (testing "Two args linear-regression"
       (is (= sets (set (keys lm-one))))
