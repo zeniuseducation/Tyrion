@@ -13,7 +13,8 @@
     (let [x-one (map float (range 50000))
           m 3.0 c 12.0
           y-one (map #(+ (* m %) c) x-one)
-          lm-two (do (info "\nTiming for two args linear-regresion")
+          lm-two (do (info "Linear regression tests for 50000 data")
+                     (info "\nTiming for two args linear-regresion")
                      (time (linear-regression x-one y-one)))
           lm-one (do (info "\nTiming for one arg linear-regresion")
                      (->> (mat/matrix [x-one y-one])
@@ -30,6 +31,7 @@
                                time))
           sets #{:correlation :gradient :intercept :data
                  :xrange :yrange :fn :sum-squared-errors}]
+
 
       (testing "One arg linear-regression"
         (is (= sets (set (keys lm-one))))
