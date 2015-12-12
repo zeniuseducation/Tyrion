@@ -18,7 +18,7 @@ Because it's easier to start this way, and we're using most of it anyway :)
 
 ## Warning!!
 
-It's not even started yet...   
+Just started.. although useful for some of our daily tasks, yet still far from reliable.
 
 ## Roadmap
 
@@ -29,7 +29,7 @@ It's not even started yet...
 
 ## Already implemented  
 
-##### stats.core
+##### stats
 
 mode, median, mean, quartiles, inter-quartile-range (iq-range), deviations, covariance, correlation, variance, std-dev  
 
