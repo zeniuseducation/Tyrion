@@ -5,7 +5,8 @@
     [tyrion.utils :refer [get-col]]
     [tyrion.math :refer :all]
     [tyrion.distance :as d]
-    [tyrion.stats :as s]))
+    [tyrion.stats :as s]
+    [taoensso.timbre :refer [info]]))
 
 (defn- labeling
   "Labeling data with (range 1 (inc k))."
@@ -45,15 +46,20 @@
         dims (range (mat/row-count (mat/get-row data 0)))
         [dfn maxi]
         [(distance-fn (get opts :distance :sq-euclidean))
-         (get opts :max-iter 20)]
+         (get opts :max-iter 100)]
         inits (->> (repeatedly k #(rand-int ctr))
                    (map #(mat/get-row data %))
                    (labeling k))]
     (loop [i (int 0) kms inits prev [] result []]
-      (if (or (> i maxi) (= (map :data kms) (map :data prev)))
-        result
+      (if (or (> i maxi) (= (map :data (sort-by :label kms))
+                            (map :data (sort-by :label prev))))
+        [(->> (sort-by key result)
+              (map second)
+              (mat/emap :data)) i]
         (let [tmp (kmeans-one dfn kms data)
-              tmp-kms (->> (mapv #(map :data %) tmp)
+              tmp-kms (->> (sort-by key tmp)
+                           (map second)
+                           (mapv #(map :data %))
                            (mapv #(s/nmean (vec dims) %))
                            (labeling k))]
           (recur (+ 1 i) tmp-kms kms tmp))))))
