@@ -57,7 +57,7 @@
                                :plot-range [(:xrange lm)
                                             (:yrange lm)])
                  (gp/plot (:fn lm)
-                          [(apply min xs) (apply max ys)]
+                          [(apply min xs) (apply max xs)]
                           :plot-points 200
                           :colour "steelblue"
                           :symbol-size 45))))
