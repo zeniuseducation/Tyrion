@@ -1,4 +1,4 @@
-(ns tyrion.clustering
+(ns tyrion.clustering.kfamily
   (:require
     [clojure.core.matrix :as mat]
     [clojure.core.matrix.dataset :as ds]
@@ -40,7 +40,7 @@
              (group-by :label))))))
 
 (defn kmeans
-  "Returns the kmeans clustering."
+  "Returns the kmeans clustering. This is the default using random seeds."
   [k data & [opts]]
   (let [ctr (mat/row-count data)
         dims (range (mat/row-count (mat/get-row data 0)))
@@ -64,4 +64,4 @@
                            (labeling k))]
           (recur (+ 1 i) tmp-kms kms tmp))))))
 
-(defn pub [x] x)
+
