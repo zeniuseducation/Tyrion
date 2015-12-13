@@ -33,6 +33,9 @@
 (defn cosh ^double [^double a]
   (Math/cosh a))
 
+(defn cube [x]
+  (Math/pow x 3))
+
 (defn exp ^double [^double a]
   (Math/exp a))
 
