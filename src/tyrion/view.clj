@@ -134,4 +134,32 @@
     (apply lm-plot-compose-impl-maps lists-of-xy-pairs)
     (apply lm-plot-compose-impl-mat lists-of-xy-pairs)))
 
+(defn cluster-plot
+  "Like list-plot but with different colour for a different cluster.
+  The data must be a list of list of xy-pairs."
+  [clustered-data]
+  (apply list-plot-compose clustered-data))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
