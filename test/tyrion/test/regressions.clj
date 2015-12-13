@@ -5,23 +5,25 @@
     [tyrion.math :refer [square sqrt]]
     [tyrion.utils :refer [round]]
     [clojure.core.matrix :as mat]
-    [clojure.core.matrix.dataset :as ds]))
+    [clojure.core.matrix.dataset :as ds]
+    [taoensso.timbre :refer [info]]))
 
 (deftest linear-regression-test
   (time
-    (let [x-one (map float (range 100000))
+    (let [x-one (map float (range 50000))
           m 3.0 c 12.0
           y-one (map #(+ (* m %) c) x-one)
-          lm-two (do (println "Timing for two args linear-regresion")
+          lm-two (do (info "\nLinear regression tests for 50000 data")
+                     (info "\nTiming for two args linear-regresion")
                      (time (linear-regression x-one y-one)))
-          lm-one (do (println "Timing for one arg linear-regresion")
+          lm-one (do (info "\nTiming for one arg linear-regresion")
                      (->> (mat/matrix [x-one y-one])
                           mat/transpose linear-regression time))
-          lm-three-map (do (println "Timing for map linear-regresion")
+          lm-three-map (do (info "\nTiming for map linear-regresion")
                            (->> (map #(hash-map :a % :b %2) x-one y-one)
                                 (linear-regression :a :b)
                                 time))
-          lm-three-ds (do (println "Timing for ds linear-regresion")
+          lm-three-ds (do (info "\nTiming for ds linear-regresion")
                           (->> (mat/matrix [x-one y-one])
                                (mat/transpose)
                                (ds/dataset [:a :b])
@@ -29,6 +31,7 @@
                                time))
           sets #{:correlation :gradient :intercept :data
                  :xrange :yrange :fn :sum-squared-errors}]
+
 
       (testing "One arg linear-regression"
         (is (= sets (set (keys lm-one))))
