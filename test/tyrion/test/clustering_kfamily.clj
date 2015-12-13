@@ -8,6 +8,8 @@
     [taoensso.timbre :as log]
     [tyrion.clustering.kfamily :refer [kmeans]]))
 
+(mat/set-current-implementation :vectorz)
+
 (defn- assign
   "Helper function to make things fun"
   [x]
@@ -17,7 +19,7 @@
 
 (deftest kmeans-testing
   (log/info "\nTesting kmeans")
-  (let [ndata 2000
+  (let [ndata 1000
         raw-x (repeatedly ndata #(rand-int 500))
         data (->> (for [x raw-x]
                     [x (assign x)])
@@ -27,14 +29,14 @@
       (log/info (str "\nKmeans 2 dims with " ndata " data"))
       (let [k 5
             clustered (time (kmeans k data))]
-        (is (= k (count clustered)))
-        (is (= ndata (count (apply concat clustered))))
-        (is (= clojure.lang.PersistentVector
+        (is (= k (mat/row-count clustered)))
+        (is (= ndata (mat/row-count (apply concat clustered))))
+        (is (= mikera.vectorz.impl.ArraySubVector
                (->> clustered ffirst type)))
-        (is (= 2 (->> clustered ffirst count)))
+        (is (= 2 (->> clustered ffirst mat/row-count)))
         (is (= ndata (->> clustered (map count) (reduce +)))))))
 
-  (let [ndata 2000
+  (let [ndata 1000
         raw-x (repeatedly ndata #(rand-int 500))
         data (->> (for [x raw-x]
                     [x (assign x) (assign x) (assign x) (assign x)])
@@ -46,7 +48,7 @@
             clustered (time (kmeans k data))]
         (is (= k (count clustered)))
         (is (= ndata (count (apply concat clustered))))
-        (is (= clojure.lang.PersistentVector
+        (is (= mikera.vectorz.impl.ArraySubVector
                (->> clustered ffirst type)))
-        (is (= 5 (->> clustered ffirst count)))
+        (is (= 5 (->> clustered ffirst (mat/row-count))))
         (is (= ndata (->> clustered (map count) (reduce +))))))))
