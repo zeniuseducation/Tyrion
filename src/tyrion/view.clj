@@ -2,7 +2,11 @@
   (:require
     [gorilla-plot.core :as gp]
     [tyrion.regressions :refer [linear-regression]]
-    [tyrion.utils :refer [get-col]]))
+    [tyrion.utils :refer [get-col col-names]]
+    [gorilla-repl.table :refer [table-view]]
+    [clojure.core.matrix :as mat]
+    [clojure.core.matrix.dataset :as ds]
+    [taoensso.timbre :as log]))
 
 (def size (atom 700))
 (def ^:private colours
@@ -139,6 +143,26 @@
   The data must be a list of list of xy-pairs."
   [clustered-data]
   (apply list-plot-compose clustered-data))
+
+(defn table
+  "Table view of data, coll can be a list of maps, dataset, or matrix.
+  Given two arguments, ks are selected keys from coll."
+  ([coll ks]
+   (cond (ds/dataset? coll)
+         (-> (mapv #(get-col % coll) ks)
+             mat/transpose
+             (table-view :columns ks))
+         (mat/matrix? coll)
+         (table-view coll)
+         :else (table-view (mapv (apply juxt ks) coll)
+                           :columns ks)))
+  ([coll]
+   (cond
+     (ds/dataset? coll) (let [cnames (col-names coll)]
+                          (table coll cnames))
+     (mat/matrix? coll) (table-view coll)
+     :else (let [cnames (col-names coll)]
+             (table coll cnames)))))
 
 
 
