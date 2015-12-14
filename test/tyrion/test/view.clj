@@ -6,6 +6,8 @@
     [taoensso.timbre :as log]
     [clojure.core.matrix.dataset :as ds]))
 
+(mat/set-current-implementation :vectorz)
+
 (deftest simple-plot-tests
   (log/info "\nTesting simple plots")
   (let [maxi 10
@@ -64,14 +66,15 @@
 
 (deftest table-view-test
   (log/info "\nTesting table view")
-  (let [maxi 100
+  (let [maxi 100.0
         maps (for [i (range maxi)]
-               (zipmap [:a :b :c] [i (* i i) (+ i i)]))
+               (zipmap [:a :b :c]
+                       (map double [i (* i i) (+ i i)])))
         mats (mat/matrix (for [i (range maxi)]
-                           [i (* i i) (+ i i)]))
+                           (map double [i (* i i) (+ i i)])))
         dset (ds/dataset [:a :b :c]
                          (for [i (range maxi)]
-                           [i (* i i) (+ i i)]))]
+                           (map double [i (* i i) (+ i i)])))]
     (log/info "\nTesting table view")
     (testing "table view column names"
       (is (= [:columns [:a :b :c]] (get-in (table maps) [:opts])))
@@ -81,8 +84,8 @@
       (is (= [:columns [:a :b]] (get-in (table dset [:a :b]) [:opts]))))
 
     (testing "table view column names"
-      (is (= mats (get-in (table maps) [:contents])))
-      (is (= mats (get-in (table dset) [:contents])))
+      (is (= mats (mat/matrix (get-in (table maps) [:contents]))))
+      (is (= mats (mat/matrix (get-in (table dset) [:contents]))))
       (is (= mats (get-in (table mats) [:contents])))
       (is (= (-> (mapv #(mat/get-column mats %) [0 1])
                  mat/transpose)
