@@ -3,7 +3,8 @@
     [clojure.test :refer :all]
     [tyrion.view :refer :all]
     [clojure.core.matrix :as mat]
-    [taoensso.timbre :as log]))
+    [taoensso.timbre :as log]
+    [clojure.core.matrix.dataset :as ds]))
 
 (deftest simple-plot-tests
   (log/info "\nTesting simple plots")
@@ -60,6 +61,35 @@
                (->> (-> (list-plot-compose data-one data-two)
                         (get-in [:content :data]))
                     (mapcat :values))))))))
+
+(deftest table-view-test
+  (log/info "\nTesting table view")
+  (let [maxi 100
+        maps (for [i (range maxi)]
+               (zipmap [:a :b :c] [i (* i i) (+ i i)]))
+        mats (mat/matrix (for [i (range maxi)]
+                           [i (* i i) (+ i i)]))
+        dset (ds/dataset [:a :b :c]
+                         (for [i (range maxi)]
+                           [i (* i i) (+ i i)]))]
+    (log/info "\nTesting table view")
+    (testing "table view column names"
+      (is (= [:columns [:a :b :c]] (get-in (table maps) [:opts])))
+      (is (= [:columns [:a :b :c]] (get-in (table dset) [:opts])))
+      (is (= nil (get-in (table mats) [:opts])))
+      (is (= [:columns [:a :b]] (get-in (table maps [:a :b]) [:opts])))
+      (is (= [:columns [:a :b]] (get-in (table dset [:a :b]) [:opts]))))
+
+    (testing "table view column names"
+      (is (= mats (get-in (table maps) [:contents])))
+      (is (= mats (get-in (table dset) [:contents])))
+      (is (= mats (get-in (table mats) [:contents])))
+      (is (= (-> (mapv #(mat/get-column mats %) [0 1])
+                 mat/transpose)
+             (get-in (table maps [:a :b]) [:contents])))
+      (is (= (-> (mapv #(mat/get-column mats %) [0 1])
+                 mat/transpose)
+             (get-in (table dset [:a :b]) [:contents]))))))
 
 
 
