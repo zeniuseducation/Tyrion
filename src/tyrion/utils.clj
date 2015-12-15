@@ -34,3 +34,16 @@
   (if (ds/dataset? data)
     (get data :column-names)
     (keys (first data))))
+
+(defn scale-data
+  "Returns the scaled version of the data."
+  [data size]
+  (let [maxes (mapv #(apply max %) (mat/transpose data))
+        ctr (mat/row-count data)
+        mdata (mat/mutable data)]
+    (loop [i (int 0)]
+      (if (>= i ctr)
+        (mat/matrix (mat/immutable mdata))
+        (do (->> (mapv #(int (* size (/ % %2))) (mat/get-row data i) maxes)
+                 (mat/set-row! mdata i))
+            (recur (+ i 1)))))))
