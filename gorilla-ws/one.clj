@@ -15,7 +15,7 @@
   (:require 
     [gorilla-plot.core :as plot]
     [tyrion.view :as v]
-    [tyrion.clustering.kfamily :as k]
+    [tyrion.clustering.kmeans :as k]
     [clojure.core.matrix :as mat]
     [gorilla-repl.table :refer [table-view]]))
 ;; @@

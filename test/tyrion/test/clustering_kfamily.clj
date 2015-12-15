@@ -6,7 +6,7 @@
     [clojure.core.matrix :as mat]
     [clojure.core.matrix.dataset :as ds]
     [taoensso.timbre :as log]
-    [tyrion.clustering.kfamily :refer [kmeans]]))
+    [tyrion.clustering.kmeans :refer [kmeans]]))
 
 (mat/set-current-implementation :vectorz)
 

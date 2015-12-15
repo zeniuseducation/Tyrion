@@ -1,4 +1,4 @@
-(ns tyrion.clustering.kfamily
+(ns tyrion.clustering.kmeans
   (:require
     [clojure.core.matrix :as mat]
     [clojure.core.matrix.dataset :as ds]
