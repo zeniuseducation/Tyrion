@@ -25,6 +25,12 @@
 
 (defn get-col
   [k coll]
-  (cond (ds/dataset? coll) (column-vals coll k)
+  (cond (ds/dataset? coll) (ds/column coll k)
         (mat/matrix? coll) (mat/get-column coll k)
         :else (mapv #(get % k) coll)))
+
+(defn col-names
+  [data]
+  (if (ds/dataset? data)
+    (get data :column-names)
+    (keys (first data))))
