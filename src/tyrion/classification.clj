@@ -40,9 +40,22 @@
      (-> #(hash-map :data % :label (nearest dfn k % training-data))
          (mapv data))))
   ([k training-data data {:keys [fn-distance weighted?]}]
-   (let [dfn (distance-fn fn-distance)]
+   (let [dfn (get distance-fn fn-distance d/sq-euclidean)]
      (-> #(hash-map :data % :label (nearest dfn k % training-data weighted?))
          (mapv data)))))
+
+(defn knn-plotting
+  "Returns only the :data for the purpose of easy plotting."
+  ([k training-data data]
+   (->> (knn k training-data data)
+        (group-by :label)
+        vals
+        (mapv #(mapv :data %))))
+  ([k training-data data {:keys [fn-distance weighted?] :as opts}]
+   (->> (knn k training-data data opts)
+        (group-by :label)
+        vals
+        (mapv #(mapv :data %)))))
 
 
 
