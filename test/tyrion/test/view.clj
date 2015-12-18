@@ -103,26 +103,43 @@
 (deftest lm-plot-test
   (testing "Linear model plotting"
     (log/info "\nTesting linear model plot")
-    (let [maxi 100
-          dim-1 (range maxi)
-          dim-2 (map #((rand-nth [+ -]) (* 1.3 %) (rand-int 100)) dim-1)
-          dim-3 (map #((rand-nth [+ -]) (* 2.3 %) (rand-int 200)) dim-1)
-          xy-list (->> (interleave dim-1 dim-3)
-                       (partition 2))
-          sample-1 (lm-plot dim-1 dim-2)
-          sample-2 (lm-plot xy-list)
-          result-1 (get-in sample-1 [:content :data])
-          result-2 (get-in sample-2 [:content :data])]
-      (is (= 2 (count result-1)))
-      (is (= (map #(hash-map :x % :y %2) dim-1 dim-2)
-             (->> result-1
-                  first :values)))
-      (is (= maxi (->> result-1 first :values count)))
-      (is (= 2 (count result-2)))
-      (is (= (map #(hash-map :x % :y %2) dim-1 dim-3)
-             (->> result-2
-                  first :values)))
-      (is (= maxi (->> result-2 first :values count))))))
+    (time
+      (let [maxi 100
+            dim-1 (range maxi)
+            dim-2 (map #((rand-nth [+ -]) (* 1.3 %) (rand-int 100)) dim-1)
+            dim-3 (map #((rand-nth [+ -]) (* 2.3 %) (rand-int 200)) dim-1)
+            xy-list-1 (->> (interleave dim-1 dim-2)
+                           (partition 2))
+            xy-list-2 (->> (interleave dim-1 dim-3)
+                           (partition 2))
+            sample-1 (lm-plot dim-1 dim-2)
+            sample-2 (lm-plot xy-list-2)
+            result-1 (get-in sample-1 [:content :data])
+            result-2 (get-in sample-2 [:content :data])
+            sample-3 (lm-plot-compose xy-list-1 xy-list-2)
+            result-3 (get-in sample-3 [:content :data])]
+
+        (log/info "\nTesting lm-plot normal")
+        (is (= 2 (count result-1)))
+        (is (= (map #(hash-map :x % :y %2) dim-1 dim-2)
+               (->> result-1
+                    first :values)))
+        (is (= maxi (->> result-1 first :values count)))
+
+        (log/info "\nTesting lm-plot xy-list")
+        (is (= 2 (count result-2)))
+        (is (= (map #(hash-map :x % :y %2) dim-1 dim-3)
+               (->> result-2
+                    first :values)))
+        (is (= maxi (->> result-2 first :values count)))
+
+        (log/info "\nTesting lm-plot compose")
+        (is (= 4 (count result-3)))
+        (is (= (repeat 2 maxi)
+               (->> result-3 (map :values) (map count) (take-nth 2))))
+        (is (= [(map #(hash-map :x % :y %2) dim-1 dim-2)
+                (map #(hash-map :x % :y %2) dim-1 dim-3)]
+               (->> result-3 (map :values) (take-nth 2))))))))
 
 
 
