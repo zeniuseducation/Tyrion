@@ -6,7 +6,8 @@
     [tyrion.math :refer [square sqrt]]
     [tyrion.distance :as d]
     [tyrion.stats :as s]
-    [taoensso.timbre :refer [info]]))
+    [taoensso.timbre :refer [info]]
+    [taoensso.timbre :as log]))
 
 (defn- labeling
   "Labeling data with (range 1 (inc k))."
@@ -67,5 +68,33 @@
                            (mapv #(s/nmean (vec dims) %))
                            (labeling k))]
           (recur (+ 1 i) tmp-kms kms tmp))))))
+
+(defn in-group?
+  [d dfn xy xy-group]
+  (not-every? #(> (dfn xy %) d) xy-group))
+
+(defn dbscan
+  "Returns the dbscan clustering. min-pts is the minimal number of points in
+  a cluster, d is the minimal distance in a cluster, and data is list of [x y]."
+  ([min-pts d data]
+   (dbscan min-pts d data {:fn-distance :sq-euclidean}))
+  ([min-pts d data {:keys [fn-distance]}]
+   (let [dfn (get distance-fn fn-distance :sq-euclidean)]
+     (loop [[x & xs] data groups []]
+       (if x
+         (let [ctr (count groups)
+               tmp (loop [i (int 0) in-g #{}]
+                     (if (< i ctr)
+                       (if (in-group? d dfn x (groups i))
+                         (recur (+ 1 i) (conj in-g i))
+                         (recur (+ 1 i) in-g))
+                       in-g))
+               res (if (empty? tmp)
+                     (conj groups [x])
+                     (->> (conj (vec (mapcat #(groups %) tmp)) x)
+                          (conj (mapv #(groups %) (remove tmp (range ctr))))
+                          vec))]
+           (recur xs res))
+         (filterv #(>= (count %) min-pts) groups))))))
 
 

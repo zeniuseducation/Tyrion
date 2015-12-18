@@ -6,7 +6,7 @@
     [clojure.core.matrix :as mat]
     [clojure.core.matrix.dataset :as ds]
     [taoensso.timbre :as log]
-    [tyrion.clustering :refer [kmeans]]))
+    [tyrion.clustering :refer :all]))
 
 (mat/set-current-implementation :vectorz)
 
@@ -51,4 +51,23 @@
         (is (= clojure.lang.PersistentVector
                (->> clustered ffirst type)))
         (is (= 5 (->> clustered ffirst (mat/row-count))))
-        (is (= ndata (->> clustered (map count) (reduce +))))))))
+        (is (= ndata (->> clustered (map count) (reduce +)))))))
+
+  (time
+    (let [ndata 500
+          data (->> (repeatedly ndata #(rand-int ndata))
+                    (mapv vector (repeatedly ndata #(rand-int ndata))))
+          dbs (dbscan 50 30 data)
+          ctr (count dbs)
+          ctr-all (count (apply concat dbs))]
+
+      (log/info "\nTesting dbscan with" ndata "data")
+
+      (is (= true (<= ctr-all ndata)))
+      (is (= (repeat ctr clojure.lang.PersistentVector)
+             (mapv type dbs)))
+      (is (= (repeat ctr true)
+             (mapv #(every? vector? %) dbs)))
+      (is (= (repeat ctr-all true)
+             (->> (apply concat dbs)
+                  (map (set data))))))))
