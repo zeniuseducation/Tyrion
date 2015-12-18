@@ -12,8 +12,9 @@
 
 (def ^:private colours
   "Good colours to be used for differentiating plots."
-  ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
-   "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"])
+  (->> ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
+        "LightCoral" "Maroon" "PaleVioletRed" "RebeccaPurple" "Cyan"]
+       cycle (take 40) vec))
 
 (defn plot-components
   "Plot a list of maps with a specified k1 as x and k2 as y.
@@ -165,7 +166,7 @@
      :else (let [cnames (col-names coll)]
              (table coll cnames))))
   ([coll ks]
-    (table coll ks ks)))
+   (table coll ks ks)))
 
 
 
