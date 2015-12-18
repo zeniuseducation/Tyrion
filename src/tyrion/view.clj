@@ -9,6 +9,7 @@
     [taoensso.timbre :as log]))
 
 (def size (atom 700))
+
 (def ^:private colours
   "Good colours to be used for differentiating plots."
   ["Magenta" "Lime" "Orange" "Blue" "SteelBlue" "Red" "GreenYellow"
