@@ -31,7 +31,7 @@
             clustered (time (kmeans k data))]
         (is (= k (mat/row-count clustered)))
         (is (= ndata (mat/row-count (apply concat clustered))))
-        (is (= mikera.vectorz.impl.ArraySubVector
+        (is (= clojure.lang.PersistentVector
                (->> clustered ffirst type)))
         (is (= 2 (->> clustered ffirst mat/row-count)))
         (is (= ndata (->> clustered (map count) (reduce +)))))))
@@ -48,7 +48,7 @@
             clustered (time (kmeans k data))]
         (is (= k (count clustered)))
         (is (= ndata (count (apply concat clustered))))
-        (is (= mikera.vectorz.impl.ArraySubVector
+        (is (= clojure.lang.PersistentVector
                (->> clustered ffirst type)))
         (is (= 5 (->> clustered ffirst (mat/row-count))))
         (is (= ndata (->> clustered (map count) (reduce +))))))))

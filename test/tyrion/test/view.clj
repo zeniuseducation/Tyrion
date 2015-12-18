@@ -3,6 +3,7 @@
     [clojure.test :refer :all]
     [tyrion.view :refer :all]
     [clojure.core.matrix :as mat]
+    [tyrion.clustering :refer :all]
     [taoensso.timbre :as log]
     [clojure.core.matrix.dataset :as ds]))
 
@@ -67,6 +68,36 @@
                (->> (-> (list-plot-compose data-one data-two)
                         (get-in [:content :data]))
                     (mapcat :values))))))))
+
+(deftest cluster-plot-test
+  (time
+    (testing "Cluster plotting"
+      (log/info "\nTesting cluster plot")
+      (let [dim-1 (range 100)
+            dim-2 (mapv #((rand-nth [+ -]) (* 2.3 %) (rand-int 100)) dim-1)
+            dim-3 (mapv #((rand-nth [+ -]) (* (* 3 (rand)) %) (rand-int 100)) dim-1)
+            dim-4 (mapv #((rand-nth [+ -]) (* 2.3 %) (rand-int 100)) dim-2)
+            clustered-1 (->> (map vector dim-1 dim-2)
+                             (kmeans 2))
+            clustered-2 (->> (map vector dim-1 dim-3)
+                             (kmeans 3))
+            clustered-3 (->> (map vector dim-1 dim-4)
+                             (kmeans 4))
+            results (->> [clustered-1 clustered-2 clustered-3]
+                         (mapv cluster-plot)
+                         (mapv #(get-in % [:content :data])))]
+        (is (= (for [datum clustered-1]
+                 (map #(let [[a b] %] {:x a :y b}) datum))
+               (map :values (results 0))))
+        (is (= 2 (count (results 0))))
+        (is (= (for [datum clustered-2]
+                 (map #(let [[a b] %] {:x a :y b}) datum))
+               (map :values (results 1))))
+        (is (= 3 (count (results 1))))
+        (is (= (for [datum clustered-3]
+                 (map #(let [[a b] %] {:x a :y b}) datum))
+               (map :values (results 2))))
+        (is (= 4 (count (results 2))))))))
 
 (deftest table-view-test
   (log/info "\nTesting table view")
