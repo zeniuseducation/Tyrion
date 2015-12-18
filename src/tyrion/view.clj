@@ -147,22 +147,24 @@
 (defn table
   "Table view of data, coll can be a list of maps, dataset, or matrix.
   Given two arguments, ks are selected keys from coll."
-  ([coll ks]
+  ([coll ks aliases]
    (cond (ds/dataset? coll)
          (-> (mapv #(get-col % coll) ks)
              mat/transpose
-             (table-view :columns ks))
+             (table-view :columns aliases))
          (mat/matrix? coll)
-         (table-view coll)
+         (table-view coll :columns aliases)
          :else (table-view (mapv (apply juxt ks) coll)
-                           :columns ks)))
+                           :columns aliases)))
   ([coll]
    (cond
      (ds/dataset? coll) (let [cnames (col-names coll)]
                           (table coll cnames))
      (mat/matrix? coll) (table-view coll)
      :else (let [cnames (col-names coll)]
-             (table coll cnames)))))
+             (table coll cnames))))
+  ([coll ks]
+    (table coll ks ks)))
 
 
 
