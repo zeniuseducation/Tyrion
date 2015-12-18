@@ -81,7 +81,9 @@
       (is (= [:columns [:a :b :c]] (get-in (table dset) [:opts])))
       (is (= nil (get-in (table mats) [:opts])))
       (is (= [:columns [:a :b]] (get-in (table maps [:a :b]) [:opts])))
-      (is (= [:columns [:a :b]] (get-in (table dset [:a :b]) [:opts]))))
+      (is (= [:columns ["A" "B"]] (get-in (table maps [:a :b] ["A" "B"]) [:opts])))
+      (is (= [:columns [:a :b]] (get-in (table dset [:a :b]) [:opts])))
+      (is (= [:columns ["A" "B"]] (get-in (table dset [:a :b] ["A" "B"]) [:opts]))))
 
     (testing "table view column names"
       (is (= mats (mat/matrix (get-in (table maps) [:contents]))))
