@@ -1,4 +1,4 @@
-(ns tyrion.test.clustering-kfamily
+(ns tyrion.test.clustering
   (:require
     [clojure.test :refer :all]
     [tyrion.math :refer [square sqrt]]
@@ -6,7 +6,7 @@
     [clojure.core.matrix :as mat]
     [clojure.core.matrix.dataset :as ds]
     [taoensso.timbre :as log]
-    [tyrion.clustering.kmeans :refer [kmeans]]))
+    [tyrion.clustering :refer [kmeans]]))
 
 (mat/set-current-implementation :vectorz)
 
