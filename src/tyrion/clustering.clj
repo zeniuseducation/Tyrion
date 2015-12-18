@@ -1,9 +1,9 @@
-(ns tyrion.clustering.kfamily
+(ns tyrion.clustering
   (:require
     [clojure.core.matrix :as mat]
     [clojure.core.matrix.dataset :as ds]
-    [tyrion.utils :refer [get-col]]
-    [tyrion.math :refer :all]
+    [tyrion.utils :refer [get-col scale-data]]
+    [tyrion.math :refer [square sqrt]]
     [tyrion.distance :as d]
     [tyrion.stats :as s]
     [taoensso.timbre :refer [info]]))
@@ -14,10 +14,10 @@
   (map #(hash-map :label % :data %2) (range 1 (inc k)) data))
 
 (def distance-fn
-  {:euclidean d/euclidean
+  {:euclidean    d/euclidean
    :sq-euclidean d/sq-euclidean
-   :cityblock d/cityblock
-   :hamming d/hamming})
+   :cityblock    d/cityblock
+   :hamming      d/hamming})
 
 (defn- nearest
   "Returns the label of nearest data from datum using distance function dfn."
@@ -41,12 +41,15 @@
 
 (defn kmeans
   "Returns the kmeans clustering. This is the default using random seeds."
-  [k data & [opts]]
-  (let [ctr (mat/row-count data)
-        dims (range (mat/row-count (mat/get-row data 0)))
-        [dfn maxi]
+  [k raw & [opts]]
+  (let [[dfn maxi scale scale-size]
         [(distance-fn (get opts :distance :sq-euclidean))
-         (get opts :max-iter 100)]
+         (get opts :max-iter 100)
+         (get opts :scale)
+         (get opts :scale-size 1000)]
+        data (if scale (scale-data raw scale-size) raw)
+        ctr (mat/row-count data)
+        dims (range (mat/row-count (mat/get-row data 0)))
         inits (->> (repeatedly k #(rand-int ctr))
                    (map #(mat/get-row data %))
                    (labeling k))]
