@@ -168,10 +168,49 @@
   ([coll ks]
    (table coll ks ks)))
 
-(defn tricky-3dpoints-plot
+(defn tricky-3d-plot
   "2d plot for 3d data, the third dimension represented by circle's size"
-  [lst]
-  ())
+  [lst & [scale]]
+  (let [[ma mb mc] (for [i (range 3)]
+                     (apply max (map #(nth % i) lst)))
+        scala (if scale scale 3000)
+        data (mapv #(let [[a b c] %]
+                     [a b (* scala (/ c mc))]) lst)]
+    (loop [[p & ps] data res (transient [])]
+      (if p
+        (recur ps (conj! res (gp/list-plot [p]
+                                           :plot-size 600
+                                           :plot-range [[0 ma] [0 mb]]
+                                           :symbol-size (nth p 2)
+                                           :opacity (+ 0.5 (* 0.5 (/ (- scala (nth p 2)) scala))))))
+        (apply gp/compose (persistent! res))))))
+
+(defn tricky-3d-plot-compose
+  "Compose two or more 3d plots with different colour for each list/cluster"
+  [clusters & [scale]]
+  (let [[ma mb mc] (for [i (range 3)]
+                     (->> (apply concat clusters)
+                          (map #(nth % i))
+                          (apply max)))
+        scala (if scale scale 3000)
+        fclut (fn [x]
+                (-> #(let [[a b c] %] [a b (* scala (/ c mc))])
+                    (mapv x)))]
+    (loop [[c & cs] clusters res [] i (int 0)]
+      (if c
+        (let [tmp (loop [[p & ps] (fclut c) resi (transient [])]
+                    (if p
+                      (recur ps (->> (gp/list-plot [p]
+                                                   :plot-size 800
+                                                   :plot-range [[0 ma] [0 mb]]
+                                                   :symbol-size (nth p 2)
+                                                   :opacity (+ 0.5 (* 0.5 (/ (- scala (nth p 2)) scala)))
+                                                   :colour (colours i))
+                                     (conj! resi)))
+                      (persistent! resi)))]
+          (recur cs (concat res tmp) (inc i)))
+        (apply gp/compose res)))))
+
 
 
 
