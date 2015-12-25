@@ -167,7 +167,10 @@
   ([coll ks]
     (table coll ks ks)))
 
-
+(defn tricky-3dpoints-plot
+  "2d plot for 3d data, the third dimension represented by circle's size"
+  [lst]
+  ())
 
 
 
