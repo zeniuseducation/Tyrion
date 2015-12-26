@@ -19,7 +19,7 @@
             data-2 (load-data :mammals)
             ctr-2 (count (:data data-2))
             mammals (:data data-2)
-            ks #{:name :file :description :data}]
+            ks #{:name :file :numerics :description :data}]
         (is (= ks (set (keys data-1))))
         (is (= ks (set (keys data-2))))
         (is (= clojure.lang.PersistentVector
@@ -31,4 +31,8 @@
         (is (= (repeat ctr-2 clojure.lang.PersistentArrayMap)
                (mapv type mammals)))
         (is (= true (every? #(= (keys (first iris)) (keys %)) iris)))
-        (is (= true (every? #(= (keys (first mammals)) (keys %)) mammals)))))))
+        (is (= true (every? #(= (keys (first mammals)) (keys %)) mammals)))
+        (is (= (repeat ctr-1 true)
+               (mapv #(every? number? ((apply juxt (:numerics data-1)) %)) iris)))
+        (is (= (repeat ctr-2 true)
+               (mapv #(every? number? ((apply juxt (:numerics data-2)) %)) mammals)))))))
