@@ -1,7 +1,7 @@
-(ns tyrion.test.dr-pca
+(ns tyrion.test.pca
   (:require
     [clojure.test :refer :all]
-    [tyrion.dr-pca :refer :all]
+    [tyrion.pca :refer :all]
     [tyrion.utils :as u]
     [tyrion.data :as d]
     [clojure.core.matrix :as mat]

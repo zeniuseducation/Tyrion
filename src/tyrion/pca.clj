@@ -1,4 +1,4 @@
-(ns tyrion.dr-pca
+(ns tyrion.pca
   (:require
     [tyrion.stats :as s]
     [clojure.core.matrix.dataset :as ds]
