@@ -2,9 +2,12 @@
   (:require [clojure.string :as cs]))
 
 (def dataset
-  {:iris {:name        "Iris"
-          :description "Iris dataset, good for clustering/classifications, or basic stats"
-          :file        "./data/iris.edn"}})
+  {:iris    {:name        "Iris"
+             :description "Iris dataset, good for clustering/classifications, or basic stats"
+             :file        "./data/iris.edn"}
+   :mammals {:name        "Mammals"
+             :description "Brain and body weight of various mammals"
+             :file        "./data/mammals.edn"}})
 
 (defn load-meta
   [dataset-key]
