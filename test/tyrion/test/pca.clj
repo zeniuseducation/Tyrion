@@ -8,6 +8,8 @@
     [clojure.core.matrix.dataset :as ds]
     [taoensso.timbre :as log]))
 
+(mat/set-current-implementation :vectorz)
+
 (deftest pca-tests
   (time
     (let [data-map (->> (d/load-data :iris)

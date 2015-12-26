@@ -19,12 +19,12 @@
                           (s/correlation (u/get-col v1 data) (u/get-col v2 data)))})]
      (loop [[x & xs] (mapcat (juxt :v1 :v2) (sort-by :score > tmp)) res #{}]
        (if x
-         (if (= (count res) target-dim)
+         (if (= (mat/row-count res) target-dim)
            (vec res)
            (recur xs (conj res x)))
          (vec res)))))
   ([target-dim data]
-    (covar-correl (range (count (first data))) target-dim data)))
+    (covar-correl (range (mat/row-count (mat/get-row data 0))) target-dim data)))
 
 (defn pca
   "Returns the data with highest covariance and lowest correlation dimensions"
@@ -33,4 +33,4 @@
      (->> (mapv #(u/get-col % data) ks)
           (mat/transpose))))
   ([target-dim data]
-    (pca (range (count (first data))) target-dim data)))
+    (pca (range (mat/row-count (mat/get-row data 0))) target-dim data)))
