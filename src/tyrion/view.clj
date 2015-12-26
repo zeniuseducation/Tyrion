@@ -173,9 +173,11 @@
   [lst & [scale]]
   (let [[ma mb mc] (for [i (range 3)]
                      (apply max (map #(nth % i) lst)))
+        mic (apply min (map #(nth % 2) lst))
         scala (if scale scale 3000)
+        fscale (fn [x] (* scala (/ (- x mic) (- mc mic))))
         data (mapv #(let [[a b c] %]
-                     [a b (* scala (/ c mc))]) lst)]
+                     [a b (fscale c)]) lst)]
     (loop [[p & ps] data res (transient [])]
       (if p
         (recur ps (conj! res (gp/list-plot [p]
@@ -192,9 +194,11 @@
                      (->> (apply concat clusters)
                           (map #(nth % i))
                           (apply max)))
+        mic (apply min (map #(nth % 2) (apply concat clusters)))
         scala (if scale scale 3000)
+        fscale (fn [x] (* scala (/ (- x mic) (- mc mic))))
         fclut (fn [x]
-                (-> #(let [[a b c] %] [a b (* scala (/ c mc))])
+                (-> #(let [[a b c] %] [a b (fscale c)])
                     (mapv x)))]
     (loop [[c & cs] clusters res [] i (int 0)]
       (if c
