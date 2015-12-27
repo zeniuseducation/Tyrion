@@ -1,7 +1,7 @@
 (ns tyrion.data
   (:require [clojure.string :as cs]))
 
-(def dataset
+(def datasets
   {:iris    {:name        "Iris"
              :description "Iris dataset, good for clustering/classifications, or basic stats"
              :file        "./data/iris.edn"
@@ -13,7 +13,7 @@
 
 (defn load-meta
   [dataset-key]
-  (get dataset dataset-key :iris))
+  (get datasets dataset-key :iris))
 
 (defn load-data
   ([dataset-key]
