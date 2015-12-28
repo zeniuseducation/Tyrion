@@ -9,7 +9,11 @@
    :mammals {:name        "Mammals"
              :description "Brain and body weight of various mammals"
              :file        "./data/mammals.edn"
-             :numerics    #{:body-weight :brain-weight}}})
+             :numerics    #{:body-weight :brain-weight}}
+   :sales   {:name        "Sales"
+             :description "Sales of an elearning site, good for regressions or clustering"
+             :file        "./data/sales.edn"
+             :numerics    #{:sales :users :sessions :durations :events}}})
 
 (defn load-meta
   [dataset-key]
