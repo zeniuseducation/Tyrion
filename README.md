@@ -10,6 +10,7 @@ Because it's easier to start this way, and we're using most of it anyway :)
 ## Leiningen
 
 [![Clojars Project](http://clojars.org/tyrion/latest-version.svg)](http://clojars.org/tyrion) 
+[![Clojars Project](https://img.shields.io/clojars/v/tyrion.svg)](https://clojars.org/tyrion)
 
 ## Status
 
