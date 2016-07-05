@@ -1,0 +1,17 @@
+## Customize the test machine
+machine:
+  java:
+    version: oraclejdk8
+
+## Customize dependencies
+dependencies:
+  override:
+    - lein deps
+
+## Customize test commands
+test:
+  override:
+    - lein do clean, test
+  post:
+    - CLOVERAGE_VERSION=1.0.7-SNAPSHOT lein cloverage --codecov
+    - bash <(curl -s https://codecov.io/bash)

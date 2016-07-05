@@ -1,14 +1,23 @@
 (ns tyrion.data
   (:require [clojure.string :as cs]))
 
-(def dataset
-  {:iris {:name        "Iris"
-          :description "Iris dataset, good for clustering/classifications, or basic stats"
-          :file        "./data/iris.edn"}})
+(def datasets
+  {:iris    {:name        "Iris"
+             :description "Iris dataset, good for clustering/classifications, or basic stats"
+             :file        "./data/iris.edn"
+             :numerics    #{:sepal-length :sepal-width :petal-length :petal-width}}
+   :mammals {:name        "Mammals"
+             :description "Brain and body weight of various mammals"
+             :file        "./data/mammals.edn"
+             :numerics    #{:body-weight :brain-weight}}
+   :sales   {:name        "Sales"
+             :description "Sales of an elearning site, good for regressions or clustering"
+             :file        "./data/sales.edn"
+             :numerics    #{:sales :users :sessions :durations :events}}})
 
 (defn load-meta
   [dataset-key]
-  (get dataset dataset-key :iris))
+  (get datasets dataset-key :iris))
 
 (defn load-data
   ([dataset-key]
