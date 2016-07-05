@@ -20,7 +20,7 @@ CI](https://circleci.com/gh/zeniuseducation/Tyrion/tree/master.svg?style=svg)](h
 [![Clojars
 Project](https://img.shields.io/clojars/v/tyrion.svg)](https://clojars.org/tyrion)
 [![Build
-Status](https://semaphoreci.com/api/v1/squest/tyrion/branches/examples/badge.svg)](https://semaphoreci.com/squest/tyrion)  
+Status](https://semaphoreci.com/api/v1/squest/tyrion/branches/master/badge.svg)](https://semaphoreci.com/squest/tyrion)  
   
 ## Test Coverage  
 
