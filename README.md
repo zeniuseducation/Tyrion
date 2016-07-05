@@ -13,9 +13,19 @@ Because it's easier to start this way, and we're using most of it anyway :)
 
 ## Status
 
-![alt tag](https://circleci.com/gh/zeniuseducation/Tyrion.svg?style=shield&circle-token=:circle-token)
-[![Circle CI](https://circleci.com/gh/zeniuseducation/Tyrion/tree/master.svg?style=svg)](https://circleci.com/gh/zeniuseducation/Tyrion/tree/master)
-[![Clojars Project](https://img.shields.io/clojars/v/tyrion.svg)](https://clojars.org/tyrion)
+![alt
+tag](https://circleci.com/gh/zeniuseducation/Tyrion.svg?style=shield&circle-token=:circle-token)
+[![Circle
+CI](https://circleci.com/gh/zeniuseducation/Tyrion/tree/master.svg?style=svg)](https://circleci.com/gh/zeniuseducation/Tyrion/tree/master)
+[![Clojars
+Project](https://img.shields.io/clojars/v/tyrion.svg)](https://clojars.org/tyrion)
+[![Build
+Status](https://semaphoreci.com/api/v1/squest/tyrion/branches/examples/badge.svg)](https://semaphoreci.com/squest/tyrion)  
+  
+## Test Coverage  
+
+[![codecov](https://codecov.io/gh/zeniuseducation/Tyrion/branch/master/graph/badge.svg)](https://codecov.io/gh/zeniuseducation/Tyrion)  
+
 
 ## Warning!!
 

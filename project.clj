@@ -8,6 +8,7 @@
                  [net.mikera/vectorz-clj "0.44.1"]
                  [gorilla-plot "0.1.4"]
                  [com.taoensso/timbre "4.4.0"]]
-  :plugins [[lein-gorilla "0.3.6"]]
+  :plugins [[lein-gorilla "0.3.6"]
+            [lein-cloverage "1.0.7-SNAPSHOT"]]
   :repositories [["releases" {:url   "http://clojars.org/repo"
                               :creds :gpg}]])
